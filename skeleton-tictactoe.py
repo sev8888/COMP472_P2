@@ -6,6 +6,9 @@ import array
 from array import *
 
 class Game:
+
+ 
+
 	MINIMAX = 0
 	ALPHABETA = 1
 	HUMAN = 2
@@ -389,5 +392,8 @@ if __name__ == "__main__":
 	while(modes > 4 or modes < 1):
 		print("please enter either 1, 2, 3 or 4\n")
 		modes = int(input())
+
+	filename = "gamefile"+str(n)+str(b)+str(s)+str(t)+".txt"	
+	f=open(filename,'a' )
 	main()
 
