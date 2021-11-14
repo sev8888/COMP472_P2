@@ -264,15 +264,18 @@ if __name__ == "__main__":
 		print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+" for bloc number "+str(i+1))
 		column_temp = input()
 		column_tester = column_temp.upper()
+		column_lower = column_temp.lower()
 		while(column_temp.isalpha == False or (ord(column_tester)> ord(str(alphabet_upper[n-1])))):
 			print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1]))
 			column_temp = input()
 			column_tester = column_temp.upper()
+			column_lower = column_temp.lower()
 
 		bloc.insert(0,row_temp)
-		bloc.insert(1, column_temp)
+		column_number = ord(column_lower)-96
+		bloc.insert(1, column_number)
 		bloc_positions.append(bloc)
-	#print(bloc_positions)
+	print(bloc_positions)
 
 	print("==== the winning line-up size between 3 to "+str(n)+"\n")
 	s = int(input())
