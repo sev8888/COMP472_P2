@@ -396,6 +396,9 @@ if __name__ == "__main__":
 	filename = "gamefile"+str(n)+str(b)+str(s)+str(t)+".txt"	
 	#f=open(filename,'a' )
 	with open(filename,'a') as f:
-		f.writelines("the value of the board size n is "+str(n))
+		f.writelines("the value of the board size n is "+str(n)+"\n")
+		f.writelines("the number of blocs b is "+str(b)+"\n")
+		f.writelines("the value of the winning line-up s is "+str(s)+"\n")
+		f.writelines("the value of the maximum allowed time for the program to return a move is "+str(t)+"\n")
 	main()
 
