@@ -2,6 +2,8 @@
 
 import time
 import string
+import array
+from array import *
 
 class Game:
 	MINIMAX = 0
@@ -23,13 +25,27 @@ class Game:
 		for i in range(n):
 			row = []
 			for j in range(n):
-				row.append('.')
+				for k  in range(b):
+					if(bloc_positions[k][0] == i and bloc_positions[k][1] ==  j):
+						row.append('%')
+					else:
+						row.append('.')
 			self.current_state.append(row)
 
 		# Player X always plays first
 		self.player_turn = 'X'
 
 		#print board layout function 
+
+
+	# def setup_blocs(self):
+
+	# 	for i in range(b):
+
+
+
+
+	
 	def draw_board(self):
 		print()
 		for y in range(0, n):
@@ -258,7 +274,7 @@ if __name__ == "__main__":
 		bloc = []
 		print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(i+1))
 		row_temp = int(input())
-		while(row_temp > n or row_temp < 0):
+		while(row_temp > n-1 or row_temp < 0):
 			print("please enter a value in the correct range (between 0 to "+str(n-1)+")")
 			row_temp = int(input())
 		print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+" for bloc number "+str(i+1))
@@ -270,12 +286,12 @@ if __name__ == "__main__":
 			column_temp = input()
 			column_tester = column_temp.upper()
 			column_lower = column_temp.lower()
-
 		bloc.insert(0,row_temp)
-		column_number = ord(column_lower)-96
+		column_number = int(ord(column_lower)-96-1)
 		bloc.insert(1, column_number)
 		bloc_positions.append(bloc)
 	print(bloc_positions)
+	print(bloc_positions[0][0])
 
 	print("==== the winning line-up size between 3 to "+str(n)+"\n")
 	s = int(input())
