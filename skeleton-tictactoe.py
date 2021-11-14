@@ -25,11 +25,14 @@ class Game:
 		for i in range(n):
 			row = []
 			for j in range(n):
-				for k  in range(b):
-					if(bloc_positions[k][0] == i and bloc_positions[k][1] ==  j):
-						row.append('%')
-					else:
-						row.append('.')
+				if(b>0):
+					for k  in range(b):
+						if(bloc_positions[k][0] == i and bloc_positions[k][1] ==  j):
+							row.append('%')
+						else:
+							row.append('.')
+				else:
+					row.append('.')
 			self.current_state.append(row)
 
 		# Player X always plays first
@@ -55,7 +58,7 @@ class Game:
 		print()
 		
 	def is_valid(self, px, py):
-		if px < 0 or px > 2 or py < 0 or py > 2:
+		if px < 0 or px > n or py < 0 or py > n:
 			return False
 		elif self.current_state[px][py] != '.':
 			return False
@@ -143,8 +146,8 @@ class Game:
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
-		for i in range(0, 3):
-			for j in range(0, 3):
+		for i in range(0, n):
+			for j in range(0, n):
 				if self.current_state[i][j] == '.':
 					if max:
 						self.current_state[i][j] = 'O'
@@ -182,8 +185,8 @@ class Game:
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
-		for i in range(0, 3):
-			for j in range(0, 3):
+		for i in range(0, n):
+			for j in range(0, n):
 				if self.current_state[i][j] == '.':
 					if max:
 						self.current_state[i][j] = 'O'
@@ -269,29 +272,29 @@ if __name__ == "__main__":
 	while(b > (2*n) or b < 0):
 		print("please enter a value in the correct range (between 0 and "+str(2*n)+")\n")
 		b = int(input())
-			
-	for i in range(b):
-		bloc = []
-		print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(i+1))
-		row_temp = int(input())
-		while(row_temp > n-1 or row_temp < 0):
-			print("please enter a value in the correct range (between 0 to "+str(n-1)+")")
+	if(b>0):	
+		for i in range(b):
+			bloc = []
+			print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(i+1))
 			row_temp = int(input())
-		print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+" for bloc number "+str(i+1))
-		column_temp = input()
-		column_tester = column_temp.upper()
-		column_lower = column_temp.lower()
-		while(column_temp.isalpha == False or (ord(column_tester)> ord(str(alphabet_upper[n-1])))):
-			print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1]))
+			while(row_temp > n-1 or row_temp < 0):
+				print("please enter a value in the correct range (between 0 to "+str(n-1)+")")
+				row_temp = int(input())
+			print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+" for bloc number "+str(i+1))
 			column_temp = input()
 			column_tester = column_temp.upper()
 			column_lower = column_temp.lower()
-		bloc.insert(0,row_temp)
-		column_number = int(ord(column_lower)-96-1)
-		bloc.insert(1, column_number)
-		bloc_positions.append(bloc)
-	print(bloc_positions)
-	print(bloc_positions[0][0])
+			while(column_temp.isalpha == False or (ord(column_tester)> ord(str(alphabet_upper[n-1])))):
+				print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1]))
+				column_temp = input()
+				column_tester = column_temp.upper()
+				column_lower = column_temp.lower()
+			bloc.insert(0,row_temp)
+			column_number = int(ord(column_lower)-96-1)
+			bloc.insert(1, column_number)
+			bloc_positions.append(bloc)
+		#print(bloc_positions)
+		#print(bloc_positions[0][0])
 
 	print("==== the winning line-up size between 3 to "+str(n)+"\n")
 	s = int(input())
