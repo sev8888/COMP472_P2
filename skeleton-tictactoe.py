@@ -394,6 +394,8 @@ if __name__ == "__main__":
 		modes = int(input())
 
 	filename = "gamefile"+str(n)+str(b)+str(s)+str(t)+".txt"	
-	f=open(filename,'a' )
+	#f=open(filename,'a' )
+	with open(filename,'a') as f:
+		f.writelines("the value of the board size n is "+str(n))
 	main()
 
