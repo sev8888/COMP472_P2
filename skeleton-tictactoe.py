@@ -11,22 +11,21 @@ class Game:
 	HUMAN = 2
 	AI = 3
 	
+	# init
 	def __init__(self, recommend = True):
 		self.initialize_game()
 		self.recommend = recommend
-		
+	
+	# build game board
 	def initialize_game(self):
-		# self.current_state = [['.','.','.'],
-		# 					  ['.','.','.'],
-		# 					  ['.','.','.']]
-
 		#makes n by n matrix, n is defined in inputs before main (size of board)
+		#fills with '.' for blank, '%' for bloc
 		self.current_state = []
 		for i in range(n):
 			row = []
 			for j in range(n):
 				if(b>0):
-					for k  in range(b):
+					for k in range(b):
 						if(bloc_positions[k][0] == i and bloc_positions[k][1] ==  j):
 							row.append('%')
 						else:
@@ -38,56 +37,116 @@ class Game:
 		# Player X always plays first
 		self.player_turn = 'X'
 
-		#print board layout function 
-
-
-	# def setup_blocs(self):
-
-	# 	for i in range(b):
-
-
-
-
-	
+	# print board layout
 	def draw_board(self):
+		# col(x) = A, B, C, ...
+		# row(y) = 1, 2, 3, ...
 		print()
+		print("   ", end="")
+		for x in range(0, n):
+			print(F'{chr(65+x)}', end=" ")
+		print("\n ■", end="")
+		for x in range(0, 2*n+1):
+			print(F'-', end="")
+		print("■")
 		for y in range(0, n):
+			print(F'{y}| ', end="")
 			for x in range(0, n):
-				print(F'{self.current_state[x][y]}', end="")
-			print()
+				print(F'{self.current_state[x][y]}', end=" ")
+			print("|")
+		print(" ■", end="")
+		for x in range(0, 2*n+1):
+			print(F'-', end="")
+		print("■")
 		print()
-		
+
+	# check if move is valid @return True,False	
 	def is_valid(self, px, py):
-		if px < 0 or px > n or py < 0 or py > n:
+		print(F'{px},{py},{n}')
+		if px < 0 or px >= n or py < 0 or py >= n:
 			return False
 		elif self.current_state[px][py] != '.':
 			return False
 		else:
 			return True
 
+	# check if game has winner @return 'X','O','.',None
 	def is_end(self):
 		# Vertical win
-		for i in range(0, 3):
-			if (self.current_state[0][i] != '.' and
-				self.current_state[0][i] == self.current_state[1][i] and
-				self.current_state[1][i] == self.current_state[2][i]):
-				return self.current_state[0][i]
+		for x in range(0,n):  #column
+			current_winner = 'X'
+			current_count = 0 
+			for y in range (0, n): #row
+				if(self.current_state[x][y] == current_winner):
+					current_count = current_count + 1
+					if((current_winner == 'X' or current_winner == 'O') and current_count >= s):
+						print("vertical win")
+						return current_winner
+				else:
+					current_winner = self.current_state[x][y]
+					current_count = 0
+		# for i in range(0, 3):
+		# 	if (self.current_state[0][i] != '.' and
+		# 		self.current_state[0][i] == self.current_state[1][i] and
+		# 		self.current_state[1][i] == self.current_state[2][i]):
+		# 		return self.current_state[0][i]
+		
 		# Horizontal win
-		for i in range(0, 3):
-			if (self.current_state[i] == ['X', 'X', 'X']):
-				return 'X'
-			elif (self.current_state[i] == ['O', 'O', 'O']):
-				return 'O'
+		for y in range(0,n):  #row
+			current_winner = 'X'
+			current_count = 0 
+			for x in range (0, n): #column
+				if(self.current_state[x][y] == current_winner):
+					current_count = current_count + 1
+					if((current_winner == 'X' or current_winner == 'O') and current_count >= s):
+						print("horizontal win")
+						return current_winner
+				else:
+					current_winner = self.current_state[x][y]
+					current_count = 0
+		# for i in range(0, 3):
+		# 	if (self.current_state[i] == ['X', 'X', 'X']):
+		# 		return 'X'
+		# 	elif (self.current_state[i] == ['O', 'O', 'O']):
+		# 		return 'O'
+
 		# Main diagonal win
-		if (self.current_state[0][0] != '.' and
-			self.current_state[0][0] == self.current_state[1][1] and
-			self.current_state[0][0] == self.current_state[2][2]):
-			return self.current_state[0][0]
+		for i in range(-(n-s), n-s+1):
+			current_winner = 'X'
+			current_count = 0 
+			for j in range(n-abs(i)):
+				if(self.current_state[i+j if i>=0 else 0+j][0+j if i>=0 else abs(i)+j] == current_winner):
+					current_count = current_count + 1
+					if((current_winner == 'X' or current_winner == 'O') and current_count >= s):
+						print("diagonal win")
+						return current_winner
+				else:
+					current_winner = self.current_state[i+j if i>=0 else 0+j][0+j if i>=0 else abs(i)+j]
+					current_count = 1
+				#print(F'[{0+j if i>=0 else abs(i)+j}][{0+j if i<=0 else i+j}]->{self.current_state[0+j if i>=0 else abs(i)+j][0+j if i<=0 else i+j]}:{current_count}', end="")
+		# if (self.current_state[0][0] != '.' and
+		# 	self.current_state[0][0] == self.current_state[1][1] and
+		# 	self.current_state[0][0] == self.current_state[2][2]):
+		# 	return self.current_state[0][0]
+
 		# Second diagonal win
-		if (self.current_state[0][2] != '.' and
-			self.current_state[0][2] == self.current_state[1][1] and
-			self.current_state[0][2] == self.current_state[2][0]):
-			return self.current_state[0][2]
+		for i in range(-(n-s), n-s+1):
+			current_winner = 'X'
+			current_count = 0 
+			for j in range(n-abs(i)):
+				if(self.current_state[i+j if i>=0 else 0+j][(n-1)-j if i>=0 else (n-1)-abs(i)-j] == current_winner):
+					current_count = current_count + 1
+					if((current_winner == 'X' or current_winner == 'O') and current_count >= s):
+						print("diagonal2 win")
+						return current_winner
+				else:
+					current_winner = self.current_state[i+j if i>=0 else 0+j][(n-1)-j if i>=0 else (n-1)-abs(i)-j]
+					current_count = 1
+		# if (self.current_state[0][2] != '.' and
+		# 	self.current_state[0][2] == self.current_state[1][1] and
+		# 	self.current_state[0][2] == self.current_state[2][0]):
+		# 	return self.current_state[0][2]
+
 		# Is whole board full?
 		for i in range(0, n):
 			for j in range(0, n):
@@ -97,6 +156,7 @@ class Game:
 		# It's a tie!
 		return '.'
 
+	# print result
 	def check_end(self):
 		self.result = self.is_end()
 		# Printing the appropriate message if the game has ended
@@ -110,13 +170,16 @@ class Game:
 			self.initialize_game()
 		return self.result
 
+	# user move input (x,y)
 	def input_move(self):
 		while True:
 			print(F'Player {self.player_turn}, enter your move:')
-			px = int(input('enter the x coordinate: '))
-			py = int(input('enter the y coordinate: '))
+			#px = int(input('enter the x coordinate: '))
+			charpx = input('enter the x coordinate (char): ')
+			px  = int(ord(charpx.upper()) - 65)
+			py = int(input('enter the y coordinate (num): '))
 			if self.is_valid(px, py):
-				return (px,py)
+				return (px, py)
 			else:
 				print('The move is not valid! Try again.')
 
@@ -215,6 +278,9 @@ class Game:
 							beta = value
 		return (value, x, y)
 
+	def RX782():
+		return True
+
 	def play(self,algo=None,player_x=None,player_o=None):
 		if algo == None:
 			algo = self.ALPHABETA
@@ -226,18 +292,19 @@ class Game:
 			self.draw_board()
 			if self.check_end():
 				return
-			start = time.time()
-			if algo == self.MINIMAX:
-				if self.player_turn == 'X':
-					(_, x, y) = self.minimax(max=False)
-				else:
-					(_, x, y) = self.minimax(max=True)
-			else: # algo == self.ALPHABETA
-				if self.player_turn == 'X':
-					(m, x, y) = self.alphabeta(max=False)
-				else:
-					(m, x, y) = self.alphabeta(max=True)
-			end = time.time()
+			if player_x == self.AI or player_o == self.AI or self.recommend: #only run ais when necessary
+				start = time.time()
+				if algo == self.MINIMAX:
+					if self.player_turn == 'X':
+						(_, x, y) = self.minimax(max=False)
+					else:
+						(_, x, y) = self.minimax(max=True)
+				elif algo == self.ALPHABETA:
+					if self.player_turn == 'X':
+						(m, x, y) = self.alphabeta(max=False)
+					else:
+						(m, x, y) = self.alphabeta(max=True)
+				end = time.time()
 			if (self.player_turn == 'X' and player_x == self.HUMAN) or (self.player_turn == 'O' and player_o == self.HUMAN):
 					if self.recommend:
 						print(F'Evaluation time: {round(end - start, 7)}s')
@@ -250,29 +317,36 @@ class Game:
 			self.switch_player()
 
 def main():
-	g = Game(recommend=True)
-	g.play(algo=Game.ALPHABETA,player_x=Game.AI,player_o=Game.AI)
-	g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
+	g = Game(recommend=False)
+	if(modes == 1):
+		g.play(algo=sel,player_x=Game.HUMAN,player_o=Game.HUMAN)
+	elif(modes == 2):
+		g.play(algo=sel,player_x=Game.HUMAN,player_o=Game.AI)
+	elif(modes == 3):
+		g.play(algo=sel,player_x=Game.AI,player_o=Game.HUMAN)
+	else:
+		g.play(algo=sel,player_x=Game.AI,player_o=Game.AI)
 
 if __name__ == "__main__":
-
-#user inputs for game configuration
-	alphabet_upper = list(string.ascii_uppercase)
+	#user inputs for game configuration
+	alphabet_upper = list(string.ascii_uppercase)	#TODO change this shit
 	alphabet_lower = list(string.ascii_lowercase)
 	bloc_positions=[]
 	print("Hello, welcome to the CLI\n")
 	print("Please enter the following information:\n")
+
 	print("==== the size of the board between 3 and 10\n")
 	n = int(input())
 	while(n > 10 or n < 3):
 		print("please enter a value in the correct range (between 3 and 10")
 		n = int(input())
+
 	print("==== the number of blocs between 0 to "+str((2*n))+"\n")
 	b = int(input())
 	while(b > (2*n) or b < 0):
 		print("please enter a value in the correct range (between 0 and "+str(2*n)+")\n")
 		b = int(input())
-	if(b>0):	
+	if(b>0):
 		for i in range(b):
 			bloc = []
 			print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(i+1))
@@ -310,7 +384,7 @@ if __name__ == "__main__":
 	print("==== to force the use of minimax input  0, to force the use of alphabeta input 1\n")
 	sel = bool(input())
 	print("==== select the player configuration from the following options:\n"+
-	"	1 for Human vs Human\n" + "	2 for Human vs AI\n" + "	3 for AI vs Human\n" + "	4 for AI vs AI")
+	"	1 for Human vs Human\n" + "	2 for Human vs AI (Human is player X)\n" + "	3 for AI vs Human (Human is player o)\n" + "	4 for AI vs AI")
 	modes = int(input())
 	while(modes > 4 or modes < 1):
 		print("please enter either 1, 2, 3 or 4\n")
