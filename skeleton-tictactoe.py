@@ -4,6 +4,8 @@ import time
 import string
 import array
 from array import *
+import os
+import os.path as ospath
 
 class Game:
 
@@ -395,10 +397,19 @@ if __name__ == "__main__":
 
 	filename = "gamefile"+str(n)+str(b)+str(s)+str(t)+".txt"	
 	#f=open(filename,'a' )
+
+	if os.path.exists(filename):
+ 		 os.remove(filename)
 	with open(filename,'a') as f:
 		f.writelines("the value of the board size n is "+str(n)+"\n")
 		f.writelines("the number of blocs b is "+str(b)+"\n")
 		f.writelines("the value of the winning line-up s is "+str(s)+"\n")
 		f.writelines("the value of the maximum allowed time for the program to return a move is "+str(t)+"\n")
+		f.writelines("\nposition of blocs:\n")
+		if(b>0):
+			for i in bloc_positions:
+				f.writelines(str(i) + '\n')
 	main()
+
+	f.close()
 

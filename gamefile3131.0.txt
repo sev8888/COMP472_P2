@@ -1,0 +1,7 @@
+the value of the board size n is 3
+the number of blocs b is 1
+the value of the winning line-up s is 3
+the value of the maximum allowed time for the program to return a move is 1.0
+
+position of blocs:
+[1, 0]
