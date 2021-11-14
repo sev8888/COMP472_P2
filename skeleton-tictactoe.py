@@ -156,7 +156,7 @@ class Game:
 		# It's a tie!
 		return '.'
 
-	# print result
+	# print game result
 	def check_end(self):
 		self.result = self.is_end()
 		# Printing the appropriate message if the game has ended
