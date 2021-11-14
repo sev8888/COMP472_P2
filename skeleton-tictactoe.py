@@ -1,6 +1,7 @@
 # based on code from https://stackabuse.com/minimax-and-alpha-beta-pruning-in-python
 
 import time
+import string
 
 class Game:
 	MINIMAX = 0
@@ -13,16 +14,26 @@ class Game:
 		self.recommend = recommend
 		
 	def initialize_game(self):
-		self.current_state = [['.','.','.'],
-							  ['.','.','.'],
-							  ['.','.','.']]
+		# self.current_state = [['.','.','.'],
+		# 					  ['.','.','.'],
+		# 					  ['.','.','.']]
+
+		#makes n by n matrix, n is defined in inputs before main (size of board)
+		self.current_state = []
+		for i in range(n):
+			row = []
+			for j in range(n):
+				row.append('.')
+			self.current_state.append(row)
+
 		# Player X always plays first
 		self.player_turn = 'X'
 
+		#print board layout function 
 	def draw_board(self):
 		print()
-		for y in range(0, 3):
-			for x in range(0, 3):
+		for y in range(0, n):
+			for x in range(0, n):
 				print(F'{self.current_state[x][y]}', end="")
 			print()
 		print()
@@ -59,8 +70,8 @@ class Game:
 			self.current_state[0][2] == self.current_state[2][0]):
 			return self.current_state[0][2]
 		# Is whole board full?
-		for i in range(0, 3):
-			for j in range(0, 3):
+		for i in range(0, n):
+			for j in range(0, n):
 				# There's an empty field, we continue the game
 				if (self.current_state[i][j] == '.'):
 					return None
@@ -225,5 +236,62 @@ def main():
 	g.play(algo=Game.MINIMAX,player_x=Game.AI,player_o=Game.HUMAN)
 
 if __name__ == "__main__":
+
+#user inputs for game configuration
+	alphabet_upper = list(string.ascii_uppercase)
+	alphabet_lower = list(string.ascii_lowercase)
+	bloc_positions=[]
+	print("Hello, welcome to the CLI\n")
+	print("Please enter the following information:\n")
+	print("==== the size of the board between 3 and 10\n")
+	n = int(input())
+	while(n > 10 or n < 3):
+		print("please enter a value in the correct range (between 3 and 10")
+		n = int(input())
+	print("==== the number of blocs between 0 to "+str((2*n))+"\n")
+	b = int(input())
+	while(b > (2*n) or b < 0):
+		print("please enter a value in the correct range (between 0 and "+str(2*n)+")\n")
+		b = int(input())
+			
+	for i in range(b):
+		bloc = []
+		print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(i+1))
+		row_temp = int(input())
+		while(row_temp > n or row_temp < 0):
+			print("please enter a value in the correct range (between 0 to "+str(n-1)+")")
+			row_temp = int(input())
+		print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+" for bloc number "+str(i+1))
+		column_temp = input()
+		column_tester = column_temp.upper()
+		while(column_temp.isalpha == False or (ord(column_tester)> ord(str(alphabet_upper[n-1])))):
+			print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1]))
+			column_temp = input()
+			column_tester = column_temp.upper()
+
+		bloc.insert(0,row_temp)
+		bloc.insert(1, column_temp)
+		bloc_positions.append(bloc)
+	#print(bloc_positions)
+
+	print("==== the winning line-up size between 3 to "+str(n)+"\n")
+	s = int(input())
+	while(s > n or s < 3):
+		print("please enter a value in the correct range (between 0 and "+str(n)+")\n")
+		s = int(input())
+	print("====  the maximum depth of adversarial search for player 1\n")
+	d1 = int(input())
+	print("====  the maximum depth of adversarial search for player 2\n")
+	d2 = int(input())
+	print("==== the maximum time allowed (in seconds) for the program to return a move\n")
+	t = float(input())
+	print("==== to force the use of minimax input  0, to force the use of alphabeta input 1\n")
+	sel = bool(input())
+	print("==== select the player configuration from the following options:\n"+
+	"	1 for Human vs Human\n" + "	2 for Human vs AI\n" + "	3 for AI vs Human\n" + "	4 for AI vs AI")
+	modes = int(input())
+	while(modes > 4 or modes < 1):
+		print("please enter either 1, 2, 3 or 4\n")
+		modes = int(input())
 	main()
 
