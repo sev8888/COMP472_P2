@@ -51,34 +51,27 @@ class Game:
 	def draw_board(self):
 		# col(x) = A, B, C, ...
 		# row(y) = 1, 2, 3, ...
-		# print()
-		# print("   ", end="")
-		# for x in range(0, n):
-		# 	print(F'{chr(65+x)}', end=" ")
-		# print("\n ■", end="")
-		# for x in range(0, 2*n+1):
-		# 	print(F'-', end="")
-		# print("■")
-		# for y in range(0, n):
-		# 	print(F'{y}| ', end="")
-		# 	for x in range(0, n):
-		# 		print(F'{self.current_state[x][y]}', end=" ")
-		# 	print("|")
-		# print(" ■", end="")
-		# for x in range(0, 2*n+1):
-		# 	print(F'-', end="")
-		# print("■")
-		# print()
 		print()
-		for y in range(0, 3):
-			for x in range(0, 3):
-				print(F'{self.current_state[x][y]}', end="")
-			print()
+		print("   ", end="")
+		for x in range(0, n):
+			print(F'{chr(65+x)}', end=" ")
+		print("\n ■", end="")
+		for x in range(0, 2*n+1):
+			print(F'-', end="")
+		print("■")
+		for y in range(0, n):
+			print(F'{y}| ', end="")
+			for x in range(0, n):
+				print(F'{self.current_state[x][y]}', end=" ")
+			print("|")
+		print(" ■", end="")
+		for x in range(0, 2*n+1):
+			print(F'-', end="")
+		print("■")
 		print()
 
 	# check if move is valid @return True,False	
 	def is_valid(self, px, py):
-		print(F'{px},{py},{n}')
 		if px < 0 or px >= n or py < 0 or py >= n:
 			return False
 		elif self.current_state[px][py] != '.':
@@ -96,16 +89,11 @@ class Game:
 				if(self.current_state[x][y] == current_winner):
 					current_count = current_count + 1
 					if((current_winner == 'X' or current_winner == 'O') and current_count >= s):
-						print("vertical win")
+						#print("vertical win")
 						return current_winner
 				else:
 					current_winner = self.current_state[x][y]
 					current_count = 0
-		# for i in range(0, 3):
-		# 	if (self.current_state[0][i] != '.' and
-		# 		self.current_state[0][i] == self.current_state[1][i] and
-		# 		self.current_state[1][i] == self.current_state[2][i]):
-		# 		return self.current_state[0][i]
 		
 		# Horizontal win
 		for y in range(0,n):  #row
@@ -115,16 +103,11 @@ class Game:
 				if(self.current_state[x][y] == current_winner):
 					current_count = current_count + 1
 					if((current_winner == 'X' or current_winner == 'O') and current_count >= s):
-						print("horizontal win")
+						#print("horizontal win")
 						return current_winner
 				else:
 					current_winner = self.current_state[x][y]
 					current_count = 0
-		# for i in range(0, 3):
-		# 	if (self.current_state[i] == ['X', 'X', 'X']):
-		# 		return 'X'
-		# 	elif (self.current_state[i] == ['O', 'O', 'O']):
-		# 		return 'O'
 
 		# Main diagonal win
 		for i in range(-(n-s), n-s+1):
@@ -134,16 +117,12 @@ class Game:
 				if(self.current_state[i+j if i>=0 else 0+j][0+j if i>=0 else abs(i)+j] == current_winner):
 					current_count = current_count + 1
 					if((current_winner == 'X' or current_winner == 'O') and current_count >= s):
-						print("diagonal win")
+						#print("diagonal win")
 						return current_winner
 				else:
 					current_winner = self.current_state[i+j if i>=0 else 0+j][0+j if i>=0 else abs(i)+j]
 					current_count = 1
 				#print(F'[{0+j if i>=0 else abs(i)+j}][{0+j if i<=0 else i+j}]->{self.current_state[0+j if i>=0 else abs(i)+j][0+j if i<=0 else i+j]}:{current_count}', end="")
-		# if (self.current_state[0][0] != '.' and
-		# 	self.current_state[0][0] == self.current_state[1][1] and
-		# 	self.current_state[0][0] == self.current_state[2][2]):
-		# 	return self.current_state[0][0]
 
 		# Second diagonal win
 		for i in range(-(n-s), n-s+1):
@@ -153,23 +132,19 @@ class Game:
 				if(self.current_state[i+j if i>=0 else 0+j][(n-1)-j if i>=0 else (n-1)-abs(i)-j] == current_winner):
 					current_count = current_count + 1
 					if((current_winner == 'X' or current_winner == 'O') and current_count >= s):
-						print("diagonal2 win")
+						#print("diagonal2 win")
 						return current_winner
 				else:
 					current_winner = self.current_state[i+j if i>=0 else 0+j][(n-1)-j if i>=0 else (n-1)-abs(i)-j]
 					current_count = 1
-		# if (self.current_state[0][2] != '.' and
-		# 	self.current_state[0][2] == self.current_state[1][1] and
-		# 	self.current_state[0][2] == self.current_state[2][0]):
-		# 	return self.current_state[0][2]
 
 		# Is whole board full?
 		for i in range(0, n):
 			for j in range(0, n):
-				# There's an empty field, we continue the game
+				# While there is an empty field, we continue the game
 				if (self.current_state[i][j] == '.'):
 					return None
-		# It's a tie!
+		# If there is no more moves, it's a tie!
 		return '.'
 
 	# print game result
@@ -191,9 +166,13 @@ class Game:
 		while True:
 			print(F'Player {self.player_turn}, enter your move:')
 			#px = int(input('enter the x coordinate: '))
-			charpx = input('enter the x coordinate (char): ')
-			px  = int(ord(charpx.upper()) - 65)
-			py = int(input('enter the y coordinate (num): '))
+			strx = input('enter the x coordinate (char): ')
+			px = int(ord(strx.upper()) - 65)
+			stry = input('enter the y coordinate (num): ')
+			if stry.isdigit():
+				py = int(stry)
+			else:
+				py = 100
 			if self.is_valid(px, py):
 				return (px, py)
 			else:
@@ -294,7 +273,62 @@ class Game:
 							beta = value
 		return (value, x, y)
 
-	def RX782():
+	def e1(self,MaxScore,MinScore,first_player,second_player):
+		# Maximizing for 'X' and minimizing for 'O'
+		# first player will add 1, second player will minus 1 and blank will return 0
+		calculation_score = 0
+		for i in range(0,n):
+			for j in range(0,n):
+				if self.current_state[i][j]=='.':
+					# if it is player1 turn
+						if max:
+							#calculate the value of its score
+							# calculate score base on row
+							for x in range (0,n):
+								if self.current_state[i][x] == first_player:
+									calculation_score = calculation_score + 1
+								elif self.current_state[i][x] == second_player:
+									calculation_score = calculation_score - 1
+								elif self.current_state[i][x] == '.':
+									calculation_score = calculation_score + 0
+							# calculate score base on column
+							for x in range (0,n):
+								if self.current_state[x][i] == first_player:
+									calculation_score = calculation_score + 1
+								elif self.current_state[x][i] == second_player:
+									calculation_score = calculation_score - 1
+								elif self.current_state[x][i] == '.':
+									calculation_score = calculation_score + 0
+							# compare the calculation_score with the previous score
+							if calculation_score > MaxScore:
+								MaxScore = calculation_score
+								self.current_state[i][j] = first_player
+					# if it is player2 turn
+						else:
+							#calculate the value of its score
+							# calculate score base on row
+							for x in range (0,n):
+								if self.current_state[i][x] == first_player:
+									calculation_score = calculation_score + 1
+								elif self.current_state[i][x] == second_player:
+									calculation_score = calculation_score - 1
+								elif self.current_state[i][x] == '.':
+									calculation_score = calculation_score + 0
+							# calculate score base on column
+							for x in range (0,n):
+								if self.current_state[x][i] == first_player:
+									calculation_score = calculation_score + 1
+								elif self.current_state[x][i] == second_player:
+									calculation_score = calculation_score - 1
+								elif self.current_state[x][i] == '.':
+									calculation_score = calculation_score + 0
+							
+							# compare the calculation_score with the previous score
+							if calculation_score < MinScore:
+								MinScore = calculation_score
+								self.current_state[i][j] = second_player
+
+	def e2():
 		return True
 
 	def play(self,algo=None,player_x=None,player_o=None):
