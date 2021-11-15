@@ -8,9 +8,6 @@ import os
 import os.path as ospath
 
 class Game:
-
- 
-
 	MINIMAX = 0
 	ALPHABETA = 1
 	HUMAN = 2
@@ -29,21 +26,10 @@ class Game:
 		for i in range(n):
 			row = []
 			for j in range(n):
-				if(b>0):
-					for k in range(0,b):
-						if(bloc_positions[k][0] == i and bloc_positions[k][1] ==  j):
-							print(str(i))
-							print(str(j))
-							print(str(bloc_positions[k][0]))
-							print(str(bloc_positions[k][1]))
-							print("\n")
-							row.append('%')
-						else:
-							row.append('.')
-				else:
-					row.append('.')
+				row.append('.')
 			self.current_state.append(row)
-
+		for b in bloc_positions:
+			self.current_state[b[0]][b[1]] = '%'
 		# Player X always plays first
 		self.player_turn = 'X'
 
@@ -166,9 +152,11 @@ class Game:
 		while True:
 			print(F'Player {self.player_turn}, enter your move:')
 			#px = int(input('enter the x coordinate: '))
-			strx = input('enter the x coordinate (char): ')
-			px = int(ord(strx.upper()) - 65)
-			stry = input('enter the y coordinate (num): ')
+			strx = input('enter the x coordinate (letter): ')
+			if not strx.isupper():
+				strx = strx.upper()
+			px = int(ord(strx) - 65)
+			stry = input('enter the y coordinate (number): ')
 			if stry.isdigit():
 				py = int(stry)
 			else:
@@ -273,60 +261,65 @@ class Game:
 							beta = value
 		return (value, x, y)
 
-	def e1(self,MaxScore,MinScore,first_player,second_player):
-		# Maximizing for 'X' and minimizing for 'O'
-		# first player will add 1, second player will minus 1 and blank will return 0
-		calculation_score = 0
+	def e1(self, aggression=1, player='X'):
+		# the quick one, no recursion, fast algorithm
+		# player is maximizing
+		# opponent is minimizing
+		# heuristic counts number of other X/O placed in the the same line
+		if player == 'X':
+			opponent = 'O'
+		else:
+			opponent = 'X'
+		score = 0
+		scoref = score
+		x = None
+		y = None
+
 		for i in range(0,n):
 			for j in range(0,n):
 				if self.current_state[i][j]=='.':
-					# if it is player1 turn
-						if max:
-							#calculate the value of its score
-							# calculate score base on row
-							for x in range (0,n):
-								if self.current_state[i][x] == first_player:
-									calculation_score = calculation_score + 1
-								elif self.current_state[i][x] == second_player:
-									calculation_score = calculation_score - 1
-								elif self.current_state[i][x] == '.':
-									calculation_score = calculation_score + 0
-							# calculate score base on column
-							for x in range (0,n):
-								if self.current_state[x][i] == first_player:
-									calculation_score = calculation_score + 1
-								elif self.current_state[x][i] == second_player:
-									calculation_score = calculation_score - 1
-								elif self.current_state[x][i] == '.':
-									calculation_score = calculation_score + 0
-							# compare the calculation_score with the previous score
-							if calculation_score > MaxScore:
-								MaxScore = calculation_score
-								self.current_state[i][j] = first_player
-					# if it is player2 turn
-						else:
-							#calculate the value of its score
-							# calculate score base on row
-							for x in range (0,n):
-								if self.current_state[i][x] == first_player:
-									calculation_score = calculation_score + 1
-								elif self.current_state[i][x] == second_player:
-									calculation_score = calculation_score - 1
-								elif self.current_state[i][x] == '.':
-									calculation_score = calculation_score + 0
-							# calculate score base on column
-							for x in range (0,n):
-								if self.current_state[x][i] == first_player:
-									calculation_score = calculation_score + 1
-								elif self.current_state[x][i] == second_player:
-									calculation_score = calculation_score - 1
-								elif self.current_state[x][i] == '.':
-									calculation_score = calculation_score + 0
-							
-							# compare the calculation_score with the previous score
-							if calculation_score < MinScore:
-								MinScore = calculation_score
-								self.current_state[i][j] = second_player
+					# count score for row
+					for z in range (0,n):
+						if self.current_state[i][z] == player:
+							score = score + 1*aggression
+						elif self.current_state[i][z] == opponent:
+							score = score - 1
+						elif self.current_state[i][z] == '%':
+							score = score - 1*aggression
+					# count score for col
+					for z in range (0,n):
+						if self.current_state[z][j] == player:
+							score = score + 1*aggression
+						elif self.current_state[z][j] == opponent:
+							score = score - 1
+						elif self.current_state[z][j] == '%':
+							score = score - 1*aggression
+					# count score for main diagonal
+					for z in range (-n,n):
+						if (i+z)%n >= n or (i+z)%n < 0 or (j+z)%n >= n or (j+z)%n < 0: #ignore out of bound
+							continue
+						elif self.current_state[(i+z)%n][(j+z)%n] == player:
+							score = score + 1*aggression
+						elif self.current_state[(i+z)%n][(j+z)%n] == opponent:
+							score = score - 1
+						elif self.current_state[(i+z)%n][(j+z)%n] == '%':
+							score = score - 1*aggression
+					# count score for second diagonal
+					for z in range (-n,n):
+						if (i+z)%n >= n or (i+z)%n < 0 or (j+z)%n >= n or (j+z)%n < 0: #ignore out of bound
+							continue
+						elif self.current_state[(i+z)%n][(j-z)%n] == player:
+							score = score + 1*aggression
+						elif self.current_state[(i+z)%n][(j-z)%n] == opponent:
+							score = score - 1
+						elif self.current_state[(i+z)%n][(j-z)%n] == '%':
+							score = score - 1*aggression
+					# if score is greater, 
+					if score >= scoref:
+						scoref = score
+						x = i
+						y = j
+		return (scoref, x, y)
 
 	def e2():
 		return True
@@ -379,62 +372,67 @@ def main():
 
 if __name__ == "__main__":
 	#user inputs for game configuration
-	alphabet_upper = list(string.ascii_uppercase)	#TODO change this shit
-	alphabet_lower = list(string.ascii_lowercase)
+	alphabet_upper = list(string.ascii_uppercase)
 	bloc_positions=[]
 	print("Hello, welcome to the CLI\n")
 	print("Please enter the following information:\n")
+
 
 	print("==== the size of the board between 3 and 10\n")
 	n = int(input())
 	while(n > 10 or n < 3):
 		print("please enter a value in the correct range (between 3 and 10")
 		n = int(input())
+	
 
 	print("==== the number of blocs between 0 to "+str((2*n))+"\n")
 	b = int(input())
 	while(b > (2*n) or b < 0):
 		print("please enter a value in the correct range (between 0 and "+str(2*n)+")\n")
 		b = int(input())
-	if(b>0):
-		for i in range(b):
-			bloc = []
-			print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(i+1))
+	i = 0
+	while i < b:
+		bloc = []
+		print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(i+1)+"\n")
+		row_temp = int(input())
+		while(row_temp > n-1 or row_temp < 0):
+			print("please enter a value in the correct range (between 0 to "+str(n-1)+")\n")
 			row_temp = int(input())
-			while(row_temp > n-1 or row_temp < 0):
-				print("please enter a value in the correct range (between 0 to "+str(n-1)+")")
-				row_temp = int(input())
-			print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+" for bloc number "+str(i+1))
-			column_temp = input()
-			column_tester = column_temp.upper()
-			column_lower = column_temp.lower()
-			while(column_temp.isalpha == False or (ord(column_tester)> ord(str(alphabet_upper[n-1])))):
-				print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1]))
-				column_temp = input()
-				column_tester = column_temp.upper()
-				column_lower = column_temp.lower()
-			bloc.insert(0,row_temp)
-			column_number = int(ord(column_lower)-96-1)
-			bloc.insert(1, column_number)
+		print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+" for bloc number "+str(i+1)+"\n")
+		column_temp = input().upper()
+		while(column_temp.isalpha == False or (ord(column_temp)> ord(str(alphabet_upper[n-1])))):
+			print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+"\n")
+			column_temp = input().upper()
+		column_number = int(ord(column_temp)-65)
+		bloc.append(row_temp)
+		bloc.append(column_number)
+		for existingbloc in bloc_positions:
+			if bloc == existingbloc:
+				print(F"there is already a bloc at {row_temp}{column_temp}, please enter another set of coodinates")
+				break
+		else:
 			bloc_positions.append(bloc)
-		print(bloc_positions)
-		#print(bloc_positions[0][0])
+			i = i+1
 
 	print("==== the winning line-up size between 3 to "+str(n)+"\n")
 	s = int(input())
 	while(s > n or s < 3):
 		print("please enter a value in the correct range (between 0 and "+str(n)+")\n")
 		s = int(input())
+
 	print("====  the maximum depth of adversarial search for player 1\n")
 	d1 = int(input())
 	print("====  the maximum depth of adversarial search for player 2\n")
 	d2 = int(input())
+
 	print("==== the maximum time allowed (in seconds) for the program to return a move\n")
 	t = float(input())
+
 	print("==== to force the use of minimax input  0, to force the use of alphabeta input 1\n")
 	sel = bool(input())
+
 	print("==== select the player configuration from the following options:\n"+
-	"	1 for Human vs Human\n" + "	2 for Human vs AI (Human is player X)\n" + "	3 for AI vs Human (Human is player o)\n" + "	4 for AI vs AI")
+	"\t1 for Human vs Human\n" + "\t2 for Human vs AI (Human is player X)\n" + "\t3 for AI vs Human (Human is player o)\n" + "\t4 for AI vs AI")
 	modes = int(input())
 	while(modes > 4 or modes < 1):
 		print("please enter either 1, 2, 3 or 4\n")
