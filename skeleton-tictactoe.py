@@ -39,6 +39,18 @@ class Game:
 	def draw_board(self):
 		# col(x) = A, B, C, ...
 		# row(y) = 1, 2, 3, ...
+
+		with open(dir,'a') as f:
+
+			f.writelines("\n")
+			for y in range(0, n):
+				for x in range(0, n):
+					f.writelines(F'{self.current_state[x][y]}')
+				f.writelines("\n")
+			f.writelines("\n")
+
+
+
 		print()
 		print("   ", end="")
 		for x in range(0, n):
@@ -461,12 +473,23 @@ class Game:
 				end = time.time()
 			if (self.player_turn == 'X' and player_x == self.HUMAN) or (self.player_turn == 'O' and player_o == self.HUMAN):
 					if self.recommend:
+						real_x = alphabet_upper[x]
+						with open(dir,'a') as f:
+							f.writelines(F'Recommended move: x = {real_x}, y = {y}\n')
+							f.writelines(F'Evaluation time: {round(end - start, 7)}s\n')
+
 						print(F'Evaluation time: {round(end - start, 7)}s')
-						print(F'Recommended move: x = {x}, y = {y}')
+						print(F'Recommended move: x = {real_x}, y = {y}')
+						
 					(x,y) = self.input_move()
 			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
-						print(F'Evaluation time: {round(end - start, 7)}s')
-						print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}')
+					real_x = alphabet_upper[x]
+					with open(dir,'a') as f:
+						
+						f.writelines(F'Player {self.player_turn} under AI control plays: {real_x}{y}\n')
+						f.writelines(F'i	Evaluation time: {round(end - start, 7)}s\n')
+					print(F'Evaluation time: {round(end - start, 7)}s')
+					print(F'Player {self.player_turn} under AI control plays: x = {real_x}, y = {y}')
 			self.current_state[x][y] = self.player_turn
 			self.switch_player()
 
@@ -548,11 +571,19 @@ if __name__ == "__main__":
 		modes = int(input())
 
 	filename = "gamefile"+str(n)+str(b)+str(s)+str(t)+".txt"	
-	#f=open(filename,'a' )
+	path_current = os.getcwd()
+	path_new = path_current+"/game_files"
+	dir = os.path.join(path_new, filename)
+	#os.mkdir(path_new)
+	if not os.path.exists(path_new):
+ 		 #os.remove(path_new)
+		os.mkdir(path_new)
+	
+	if os.path.exists(path_new+"/"+filename):
+ 		 os.remove(path_new+"/"+filename)
 
-	if os.path.exists(filename):
- 		 os.remove(filename)
-	with open(filename,'a') as f:
+
+	with open(dir,'a') as f:
 		f.writelines("the value of the board size n is "+str(n)+"\n")
 		f.writelines("the number of blocs b is "+str(b)+"\n")
 		f.writelines("the value of the winning line-up s is "+str(s)+"\n")
