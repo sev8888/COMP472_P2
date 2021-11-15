@@ -10,8 +10,10 @@ import os.path as ospath
 class Game:
 	MINIMAX = 0
 	ALPHABETA = 1
-	HUMAN = 2
-	AI = 3
+	H1 = 2
+	H2 = 3
+	HUMAN = 4
+	AI = 5
 	
 	# init
 	def __init__(self, recommend = True):
@@ -261,8 +263,8 @@ class Game:
 							beta = value
 		return (value, x, y)
 
-	def e1(self, aggression=1, player='X'):
-		# the quick one, no recursion, fast algorithm
+	def e1(self, score, depth, player='X'):
+		# fast algorithm
 		# player is maximizing
 		# opponent is minimizing
 		# heuristic counts number of other X/O placed in the the same line
@@ -270,10 +272,19 @@ class Game:
 			opponent = 'O'
 		else:
 			opponent = 'X'
+
+		result = self.is_end()
+		if result == player:
+			return (1000, x, y)
+		elif result == opponent:
+			return (-1000, x, y)
+		elif result == '.':
+			return (0, x, y)
+		
 		score = 0
 		scoref = score
-		x = None
-		y = None
+		x = 0
+		y = 0
 
 		for i in range(0,n):
 			for j in range(0,n):
@@ -282,18 +293,14 @@ class Game:
 					for z in range (0,n):
 						if self.current_state[i][z] == player:
 							score = score + 1*aggression
-						elif self.current_state[i][z] == opponent:
+						elif self.current_state[i][z] == opponent or self.current_state[i][z] == '%':
 							score = score - 1
-						elif self.current_state[i][z] == '%':
-							score = score - 1*aggression
 					# count score for col
 					for z in range (0,n):
 						if self.current_state[z][j] == player:
 							score = score + 1*aggression
-						elif self.current_state[z][j] == opponent:
+						elif self.current_state[z][j] == opponent or self.current_state[z][j] == '%':
 							score = score - 1
-						elif self.current_state[z][j] == '%':
-							score = score - 1*aggression
 					# count score for main diagonal
 					for z in range (-n,n):
 						if (i+z)%n >= n or (i+z)%n < 0 or (j+z)%n >= n or (j+z)%n < 0: #ignore out of bound
@@ -321,8 +328,106 @@ class Game:
 						y = j
 		return (scoref, x, y)
 
-	def e2():
-		return True
+	def e2(self,first_player,second_player, negative_infinitive):
+		# initialize the possible_move dictionary 
+		possible_move = {'UL' : 0, 'U' : 0, 'UR' : 0, 'R' : 0, 'L' : 0, 'DL' : 0, 'D' : 0, 'DR' : 0}
+		# position x of posible move
+		x_posible_move = {'UL' : 0, 'U' : 0, 'UR' : 0, 'R' : 0, 'L' : 0, 'DL' : 0, 'D' : 0, 'DR' : 0}
+		# position y of possible move
+		y_posible_move = {'UL' : 0, 'U' : 0, 'UR' : 0, 'R' : 0, 'L' : 0, 'DL' : 0, 'D' : 0, 'DR' : 0}
+		best_score = negative_infinitive
+		chosen_position =""
+		# first player choice
+		if max:
+			# go through all the location
+			for i in range(0,n):
+				for j in range(0,n):
+					# if the location is empty
+					if self.current_state[i][j] == '.':
+						# checking 8 surronding position 
+						# if possible direction is player 2 => - infinitive
+						# if possible next direction is player1, move next and add +1
+						# if possible next direction = empty => +1
+							# check for moving right
+							if (j+1) < n:
+								x_posible_move['R'] = i
+								y_posible_move['R'] = j
+								for x in range(j+1,n):
+									# if empty add 1 point to posible move
+									if self.current_state[i][x] == '.':
+										possible_move['R'] = possible_move['R'] + 1		
+									# if there is player 2 to add negative_infinitive to posible move
+									elif self.current_state[i][x] == second_player:
+										possible_move['R'] = possible_move['R'] + negative_infinitive
+									# if there is player 1 add 1 and move next
+									elif self.current_state[i][x] == first_player:
+										possible_move['R'] = possible_move['R'] + 1
+										# moving to the right becauce there is already a value in that specific location
+										if (x+1) < n:
+											y_posible_move['R'] = x+1
+							# check for moving left
+							if (j-1) >= 0:
+								x_posible_move['L'] = i
+								y_posible_move['L'] = j
+								for x in reversed(range(0,j)):
+									#if empty add 1 point to posible move
+									if self.current_state[i][x] == '.':
+										possible_move['L'] = possible_move['L'] + 1
+									#if there is player 2 add negative_infinitive to posible move
+									elif self.current_state[i][x] == second_player:
+										possible_move['L'] = possible_move['L'] + negative_infinitive
+									# if there is player 1 add 1 and move next
+									elif self.current_state[i][x] == first_player:
+										possible_move['L'] = possible_move['L'] + 1
+										# moving to the left because there is already a value in that specific location
+										if(x-1>=0):
+											y_posible_move['L'] = x-1
+							# check for moving down
+							if (i+1) < n:
+								x_posible_move['D'] = i
+								y_posible_move['D'] = j
+								for x in range(i+1,n):
+									# if empty add 1 point to posible move
+									if self.current_state[x][j] == '.':
+										possible_move['D'] = possible_move['D'] + 1		
+									# if there is player 2 to add negative_infinitive to posible move
+									elif self.current_state[x][j] == second_player:
+										possible_move['D'] = possible_move['D'] + negative_infinitive
+									# if there is player 1 add 1 and move next
+									elif self.current_state[x][j] == first_player:
+										possible_move['D'] = possible_move['D'] + 1
+										# moving to the down becauce there is already a value in that specific location
+										if (x+1) < n:
+											x_posible_move['D'] = x+1
+							# check for moving up
+							if (i-1) >= 0:
+								x_posible_move['U'] = i
+								y_posible_move['U'] = j
+								for x in reversed(range(0,j)):
+									#if empty add 1 point to posible move
+									if self.current_state[x][j] == '.':
+										possible_move['U'] = possible_move['U'] + 1
+									#if there is player 2 add negative_infinitive to posible move
+									elif self.current_state[x][j] == second_player:
+										possible_move['U'] = possible_move['U'] + negative_infinitive
+									# if there is player 1 add 1 and move next
+									elif self.current_state[x][j] == first_player:
+										possible_move['U'] = possible_move['U'] + 1
+										# moving to the left because there is already a value in that specific location
+										if(x-1>=0):
+											y_posible_move['U'] = x-1
+						
+							# check for moving up - left
+							# check for moving up - right
+							# check for moving down - left
+							# check for moving down - right
+			# checking which move is the best
+			for key in possible_move:
+				if(possible_move[key] > best_score):
+					best_score = possible_move[key]
+					chosen_position = key
+			# first player decisition		
+			self.current_state[x_posible_move[chosen_position]][y_posible_move[chosen_position]] = first_player
 
 	def play(self,algo=None,player_x=None,player_o=None):
 		if algo == None:
@@ -331,6 +436,7 @@ class Game:
 			player_x = self.HUMAN
 		if player_o == None:
 			player_o = self.HUMAN
+
 		while True:
 			self.draw_board()
 			if self.check_end():
@@ -347,6 +453,11 @@ class Game:
 						(m, x, y) = self.alphabeta(max=False)
 					else:
 						(m, x, y) = self.alphabeta(max=True)
+				elif algo == self.H1:
+					if self.player_turn == 'X':
+						(_, x, y) = self.e1(aggression=2)
+					else:
+						(_, x, y) = self.e1(player='O', aggression=2)
 				end = time.time()
 			if (self.player_turn == 'X' and player_x == self.HUMAN) or (self.player_turn == 'O' and player_o == self.HUMAN):
 					if self.recommend:
@@ -367,7 +478,7 @@ def main():
 		g.play(algo=sel,player_x=Game.HUMAN,player_o=Game.AI)
 	elif(modes == 3):
 		g.play(algo=sel,player_x=Game.AI,player_o=Game.HUMAN)
-	else:
+	elif(modes == 4):
 		g.play(algo=sel,player_x=Game.AI,player_o=Game.AI)
 
 if __name__ == "__main__":
@@ -377,14 +488,12 @@ if __name__ == "__main__":
 	print("Hello, welcome to the CLI\n")
 	print("Please enter the following information:\n")
 
-
 	print("==== the size of the board between 3 and 10\n")
 	n = int(input())
 	while(n > 10 or n < 3):
 		print("please enter a value in the correct range (between 3 and 10")
 		n = int(input())
 	
-
 	print("==== the number of blocs between 0 to "+str((2*n))+"\n")
 	b = int(input())
 	while(b > (2*n) or b < 0):
