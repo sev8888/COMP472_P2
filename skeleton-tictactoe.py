@@ -51,29 +51,23 @@ class Game:
 	def draw_board(self):
 		# col(x) = A, B, C, ...
 		# row(y) = 1, 2, 3, ...
-		# print()
-		# print("   ", end="")
-		# for x in range(0, n):
-		# 	print(F'{chr(65+x)}', end=" ")
-		# print("\n ■", end="")
-		# for x in range(0, 2*n+1):
-		# 	print(F'-', end="")
-		# print("■")
-		# for y in range(0, n):
-		# 	print(F'{y}| ', end="")
-		# 	for x in range(0, n):
-		# 		print(F'{self.current_state[x][y]}', end=" ")
-		# 	print("|")
-		# print(" ■", end="")
-		# for x in range(0, 2*n+1):
-		# 	print(F'-', end="")
-		# print("■")
-		# print()
 		print()
-		for y in range(0, 3):
-			for x in range(0, 3):
-				print(F'{self.current_state[x][y]}', end="")
-			print()
+		print("   ", end="")
+		for x in range(0, n):
+			print(F'{chr(65+x)}', end=" ")
+		print("\n ■", end="")
+		for x in range(0, 2*n+1):
+			print(F'-', end="")
+		print("■")
+		for y in range(0, n):
+			print(F'{y}| ', end="")
+			for x in range(0, n):
+				print(F'{self.current_state[x][y]}', end=" ")
+			print("|")
+		print(" ■", end="")
+		for x in range(0, 2*n+1):
+			print(F'-', end="")
+		print("■")
 		print()
 
 	# check if move is valid @return True,False	
@@ -100,11 +94,6 @@ class Game:
 				else:
 					current_winner = self.current_state[x][y]
 					current_count = 0
-		# for i in range(0, 3):
-		# 	if (self.current_state[0][i] != '.' and
-		# 		self.current_state[0][i] == self.current_state[1][i] and
-		# 		self.current_state[1][i] == self.current_state[2][i]):
-		# 		return self.current_state[0][i]
 		
 		# Horizontal win
 		for y in range(0,n):  #row
@@ -119,11 +108,6 @@ class Game:
 				else:
 					current_winner = self.current_state[x][y]
 					current_count = 0
-		# for i in range(0, 3):
-		# 	if (self.current_state[i] == ['X', 'X', 'X']):
-		# 		return 'X'
-		# 	elif (self.current_state[i] == ['O', 'O', 'O']):
-		# 		return 'O'
 
 		# Main diagonal win
 		for i in range(-(n-s), n-s+1):
@@ -139,10 +123,6 @@ class Game:
 					current_winner = self.current_state[i+j if i>=0 else 0+j][0+j if i>=0 else abs(i)+j]
 					current_count = 1
 				#print(F'[{0+j if i>=0 else abs(i)+j}][{0+j if i<=0 else i+j}]->{self.current_state[0+j if i>=0 else abs(i)+j][0+j if i<=0 else i+j]}:{current_count}', end="")
-		# if (self.current_state[0][0] != '.' and
-		# 	self.current_state[0][0] == self.current_state[1][1] and
-		# 	self.current_state[0][0] == self.current_state[2][2]):
-		# 	return self.current_state[0][0]
 
 		# Second diagonal win
 		for i in range(-(n-s), n-s+1):
@@ -157,18 +137,14 @@ class Game:
 				else:
 					current_winner = self.current_state[i+j if i>=0 else 0+j][(n-1)-j if i>=0 else (n-1)-abs(i)-j]
 					current_count = 1
-		# if (self.current_state[0][2] != '.' and
-		# 	self.current_state[0][2] == self.current_state[1][1] and
-		# 	self.current_state[0][2] == self.current_state[2][0]):
-		# 	return self.current_state[0][2]
 
 		# Is whole board full?
 		for i in range(0, n):
 			for j in range(0, n):
-				# There's an empty field, we continue the game
+				# While there is an empty field, we continue the game
 				if (self.current_state[i][j] == '.'):
 					return None
-		# It's a tie!
+		# If there is no more moves, it's a tie!
 		return '.'
 
 	# print game result
