@@ -37,6 +37,18 @@ class Game:
 	def draw_board(self):
 		# col(x) = A, B, C, ...
 		# row(y) = 1, 2, 3, ...
+
+		with open(dir,'a') as f:
+
+			f.writelines("\n")
+			for y in range(0, n):
+				for x in range(0, n):
+					f.writelines(F'{self.current_state[x][y]}')
+				f.writelines("\n")
+			f.writelines("\n")
+
+
+
 		print()
 		print("   ", end="")
 		for x in range(0, n):
@@ -439,11 +451,19 @@ if __name__ == "__main__":
 		modes = int(input())
 
 	filename = "gamefile"+str(n)+str(b)+str(s)+str(t)+".txt"	
-	#f=open(filename,'a' )
+	path_current = os.getcwd()
+	path_new = path_current+"/game_files"
+	dir = os.path.join(path_new, filename)
+	#os.mkdir(path_new)
+	if not os.path.exists(path_new):
+ 		 #os.remove(path_new)
+		os.mkdir(path_new)
+	
+	if os.path.exists(path_new+"/"+filename):
+ 		 os.remove(path_new+"/"+filename)
 
-	if os.path.exists(filename):
- 		 os.remove(filename)
-	with open(filename,'a') as f:
+
+	with open(dir,'a') as f:
 		f.writelines("the value of the board size n is "+str(n)+"\n")
 		f.writelines("the number of blocs b is "+str(b)+"\n")
 		f.writelines("the value of the winning line-up s is "+str(s)+"\n")
