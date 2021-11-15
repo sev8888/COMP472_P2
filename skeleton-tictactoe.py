@@ -30,8 +30,13 @@ class Game:
 			row = []
 			for j in range(n):
 				if(b>0):
-					for k in range(b):
+					for k in range(0,b):
 						if(bloc_positions[k][0] == i and bloc_positions[k][1] ==  j):
+							print(str(i))
+							print(str(j))
+							print(str(bloc_positions[k][0]))
+							print(str(bloc_positions[k][1]))
+							print("\n")
 							row.append('%')
 						else:
 							row.append('.')
@@ -46,23 +51,29 @@ class Game:
 	def draw_board(self):
 		# col(x) = A, B, C, ...
 		# row(y) = 1, 2, 3, ...
+		# print()
+		# print("   ", end="")
+		# for x in range(0, n):
+		# 	print(F'{chr(65+x)}', end=" ")
+		# print("\n ■", end="")
+		# for x in range(0, 2*n+1):
+		# 	print(F'-', end="")
+		# print("■")
+		# for y in range(0, n):
+		# 	print(F'{y}| ', end="")
+		# 	for x in range(0, n):
+		# 		print(F'{self.current_state[x][y]}', end=" ")
+		# 	print("|")
+		# print(" ■", end="")
+		# for x in range(0, 2*n+1):
+		# 	print(F'-', end="")
+		# print("■")
+		# print()
 		print()
-		print("   ", end="")
-		for x in range(0, n):
-			print(F'{chr(65+x)}', end=" ")
-		print("\n ■", end="")
-		for x in range(0, 2*n+1):
-			print(F'-', end="")
-		print("■")
-		for y in range(0, n):
-			print(F'{y}| ', end="")
-			for x in range(0, n):
-				print(F'{self.current_state[x][y]}', end=" ")
-			print("|")
-		print(" ■", end="")
-		for x in range(0, 2*n+1):
-			print(F'-', end="")
-		print("■")
+		for y in range(0, 3):
+			for x in range(0, 3):
+				print(F'{self.current_state[x][y]}', end="")
+			print()
 		print()
 
 	# check if move is valid @return True,False	
@@ -372,7 +383,7 @@ if __name__ == "__main__":
 			column_number = int(ord(column_lower)-96-1)
 			bloc.insert(1, column_number)
 			bloc_positions.append(bloc)
-		#print(bloc_positions)
+		print(bloc_positions)
 		#print(bloc_positions[0][0])
 
 	print("==== the winning line-up size between 3 to "+str(n)+"\n")
@@ -409,6 +420,22 @@ if __name__ == "__main__":
 		if(b>0):
 			for i in bloc_positions:
 				f.writelines(str(i) + '\n')
+			f.writelines("\n")
+		else:
+			f.writelines("	N/A - there are no blocs\n"+"\n")
+		if(sel == 1):
+			f.writelines("Player 1: Human, "+"d is "+str(d1)+", a is " + str(sel)+"\n")
+			f.writelines("Player 2: Human, "+"d is "+str(d2)+", a is " + str(sel)+"\n")
+		elif(sel == 2):
+			f.writelines("Player 1: Human, "+"d is "+str(d1)+", a is " + str(sel)+"\n")
+			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(sel)+"\n")
+		elif(sel == 3):
+			f.writelines("Player 1: Human, "+"d is "+str(d1)+", a is " + str(sel)+"\n")
+			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(sel)+"\n")
+		else:
+			f.writelines("Player 1: AI, "+"d is "+str(d1)+", a is " + str(sel)+"\n")
+			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(sel)+"\n")
+
 	main()
 
 	f.close()
