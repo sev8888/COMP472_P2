@@ -153,10 +153,16 @@ class Game:
 		# Printing the appropriate message if the game has ended
 		if self.result != None:
 			if self.result == 'X':
+				with open(dir,'a') as f:
+					f.writelines('The winner is X!')
 				print('The winner is X!')
 			elif self.result == 'O':
+				with open(dir,'a') as f:
+					f.writelines('The winner is O!')
 				print('The winner is O!')
 			elif self.result == '.':
+				with open(dir,'a') as f:
+					f.writelines('It is a tie!')
 				print("It's a tie!")
 			self.initialize_game()
 		return self.result
