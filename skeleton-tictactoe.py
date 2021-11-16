@@ -932,10 +932,6 @@ if __name__ == "__main__":
 	if os.path.exists(path_new+"/"+filename):
  		 os.remove(path_new+"/"+filename)
 
-	if os.path.exists(path_new+"/"+"scoreboard.txt"):
- 		 os.remove(path_new+"/"+"scoreboard.txt")
-
-
 	with open(dir,'a') as f:
 		f.writelines("the value of the board size n is "+str(n)+"\n")
 		f.writelines("the number of blocs b is "+str(b)+"\n")
@@ -961,16 +957,19 @@ if __name__ == "__main__":
 			f.writelines("Player 1: AI, "+"d is "+str(d1)+", a is " + str(a)+"\n")
 			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(a)+"\n")
 	
-	if(r>0):
-		with open(dir_scoreboard, 'a') as fs:
+	if os.path.exists(dir_scoreboard):
+ 		 os.remove(dir_scoreboard)
+
+	with open(dir_scoreboard, mode="a") as fs:
+		while(r>0):
 			fs.writelines("the value of the board size n is "+str(n)+"\n")
 			fs.writelines("the number of blocs b is "+str(b)+"\n")
 			fs.writelines("the value of the winning line-up s is "+str(s)+"\n")
 			fs.writelines("the value of the maximum allowed time for the program to return a move is "+str(t)+"\n")
 			fs.writelines("Player 1: AI, "+"d is "+str(d1)+", a is " + str(a)+"\n")
 			fs.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(a)+"\n")
-			fs.writelines("The number of played games is"+str(2*r)+"\n")
-
+			fs.writelines("The number of played games is"+str(2*r)+"\n\n")
+			r = r-1
 
 	main()
 
