@@ -275,7 +275,7 @@ class Game:
 							beta = value
 		return (value, x, y)
 
-	def e1(self, player='X'):
+	def e1(self, x, y, player='X'):
 		# player is maximizing
 		# opponent is minimizing
 		# heuristic counts number of other X/O placed in the the same line
@@ -283,11 +283,12 @@ class Game:
 			opponent = 'O'
 		else:
 			opponent = 'X'
-
-		scoref = 0
+		
+		score = 0
 		x = 0
 		y = 0
 
+		self.current_state[x][y] = player
 		result = self.is_end()
 		if result == player:
 			return (1000, x, y)
@@ -296,44 +297,51 @@ class Game:
 		elif result == '.':
 			return (0, x, y)
 
-		for i in range(0,n):
-			for j in range(0,n):
-				if self.current_state[i][j]=='.':
-					# count score for row
-					score = 0
-					for z in range (0,n):
-						if self.current_state[i][z] == player:
-							score = score + 1
-						elif self.current_state[i][z] == opponent or self.current_state[i][z] == '%':
-							score = score - 1
-					# count score for col
-					for z in range (0,n):
-						if self.current_state[z][j] == player:
-							score = score + 1
-						elif self.current_state[z][j] == opponent or self.current_state[z][j] == '%':
-							score = score - 1
-					# count score for main diagonal
-					for z in range (-n,n):
-						if (i+z) >= n or (i+z) < 0 or (j+z) >= n or (j+z) < 0: #ignore out of bound
-							continue
-						elif self.current_state[(i+z)%n][(j+z)%n] == player:
-							score = score + 1
-						elif self.current_state[(i+z)%n][(j+z)%n] == opponent or self.current_state[(i+z)%n][(j+z)%n] == '%':
-							score = score - 1
-					# count score for second diagonal
-					for z in range (-n,n):
-						if (i+z) >= n or (i+z) < 0 or (j-z) >= n or (j-z) < 0: #ignore out of bound
-							continue
-						elif self.current_state[(i+z)%n][(j-z)%n] == player:
-							score = score + 1
-						elif self.current_state[(i+z)%n][(j-z)%n] == opponent or self.current_state[(i+z)%n][(j-z)%n] == '%':
-							score = score - 1
-					# if score is greater, 
-					if score >= scoref:
-						scoref = score
-						x = i
-						y = j
-		return (scoref, x, y)
+		# count score for row
+		for z in range (0,n):
+			if self.current_state[x][z] == player:
+				score = score + 2
+			elif self.current_state[x][z] == '.':
+				score = score + 1
+			elif self.current_state[x][z] == opponent:
+				score = score - 1
+			elif self.current_state[x][z] == '%':
+				score = score - 3
+		# count score for col
+		for z in range (0,n):
+			if self.current_state[z][y] == player:
+				score = score + 2
+			elif self.current_state[z][y] == '.':
+				score = score + 1
+			elif self.current_state[z][y] == opponent:
+				score = score - 1
+			elif self.current_state[z][y] == '%':
+				score = score - 3
+		# count score for main diagonal
+		for z in range (-n,n):
+			if (x+z) >= n or (x+z) < 0 or (y+z) >= n or (y+z) < 0: #ignore out of bound
+				continue
+			elif self.current_state[(x+z)%n][(y+z)%n] == player:
+				score = score + 2
+			elif self.current_state[(x+z)%n][(y+z)%n] == '.':
+				score = score + 1
+			elif self.current_state[(x+z)%n][(y+z)%n] == opponent:
+				score = score - 1
+			elif self.current_state[(x+z)%n][(y+z)%n] == '%':
+				score = score - 3
+		# count score for second diagonal
+		for z in range (-n,n):
+			if (x+z) >= n or (x+z) < 0 or (y-z) >= n or (y-z) < 0: #ignore out of bound
+				continue
+			elif self.current_state[(x+z)%n][(y-z)%n] == player:
+				score = score + 2
+			elif self.current_state[(x+z)%n][(y-z)%n] == '.':
+				score = score + 1
+			elif self.current_state[(x+z)%n][(y-z)%n] == opponent:
+				score = score - 1
+			elif self.current_state[(x+z)%n][(y-z)%n] == '%':
+				score = score - 3
+		return (score, x, y)
 
 	def e2(self,first_player,second_player, negative_infinitive):
 		# initialize the possible_move dictionary 
@@ -517,15 +525,15 @@ if __name__ == "__main__":
 	while(b > (2*n) or b < 0):
 		print("please enter a value in the correct range (between 0 and "+str(2*n)+")\n")
 		b = int(input())
-	i = 0
-	while i < b:
+	x = 0
+	while x < b:
 		bloc = []
-		print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(i+1)+"\n")
+		print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(x+1)+"\n")
 		row_temp = int(input())
 		while(row_temp > n-1 or row_temp < 0):
 			print("please enter a value in the correct range (between 0 to "+str(n-1)+")\n")
 			row_temp = int(input())
-		print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+" for bloc number "+str(i+1)+"\n")
+		print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+" for bloc number "+str(x+1)+"\n")
 		column_temp = input().upper()
 		while(column_temp.isalpha == False or (ord(column_temp)> ord(str(alphabet_upper[n-1])))):
 			print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+"\n")
@@ -539,7 +547,7 @@ if __name__ == "__main__":
 				break
 		else:
 			bloc_positions.append(bloc)
-			i = i+1
+			x = x+1
 
 	print("==== the winning line-up size between 3 to "+str(n)+"\n")
 	s = int(input())
@@ -556,7 +564,7 @@ if __name__ == "__main__":
 	t = float(input())
 
 	print("==== to force the use of minimax input  0, to force the use of alphabeta input 1\n")
-	a = bool(input())
+	a = int(input())
 
 	print("==== select the player configuration from the following options:\n"+
 	"\t1 for Human vs Human\n" + "\t2 for Human vs AI (Human is player X)\n" + "\t3 for AI vs Human (Human is player o)\n" + "\t4 for AI vs AI")
@@ -585,8 +593,8 @@ if __name__ == "__main__":
 		f.writelines("the value of the maximum allowed time for the program to return a move is "+str(t)+"\n")
 		f.writelines("\nposition of blocs:\n")
 		if(b>0):
-			for i in bloc_positions:
-				f.writelines(str(i) + '\n')
+			for x in bloc_positions:
+				f.writelines(str(x) + '\n')
 			f.writelines("\n")
 		else:
 			f.writelines("	N/A - there are no blocs\n"+"\n")
