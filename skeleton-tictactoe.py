@@ -920,7 +920,7 @@ if __name__ == "__main__":
 		modes = int(input())
 	if(modes == 5):
 		print("please enter a value of r, the scoreboard game will run r*2 times: \n")
-		r = int(input())
+		r = int(input())*2
 
 	filename = "gamefile"+str(n)+str(b)+str(s)+str(t)+".txt"	
 	path_current = os.getcwd()
@@ -971,7 +971,7 @@ if __name__ == "__main__":
 			fs.writelines("the value of the maximum allowed time for the program to return a move is "+str(t)+"\n")
 			fs.writelines("Player 1: AI, "+"d is "+str(d1)+", a is " + str(a)+"\n")
 			fs.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(a)+"\n")
-			fs.writelines("The number of played games is"+str(2*r)+"\n\n")
+			fs.writelines("The number of played games is "+str(r)+"\n\n")
 			r = r-1
 
 	main()
