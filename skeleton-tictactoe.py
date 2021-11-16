@@ -205,9 +205,7 @@ class Game:
 		# We're initially setting it to 2 or -2 as worse than the worst case:
 		timer = time.time()
 
-		if(time.time() >= timer+t):
-			return 
-	
+
 		value = 2
 		if max:
 			value = -2
