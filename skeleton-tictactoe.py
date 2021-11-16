@@ -558,11 +558,17 @@ def main():
 		g.play(algo=a,player_x=Game.AI,player_o=Game.HUMAN)
 	elif(modes == 4):
 		g.play(algo=a,player_x=Game.AI,player_o=Game.AI)
+	elif(modes == 5):
+		for i in range (r):
+			g.play(algo=a,player_x=Game.AI,player_o=Game.AI)
+		for i in range (r):
+			g.play(algo=a,player_x=Game.AI,player_o=Game.AI)
 
 if __name__ == "__main__":
 	#user inputs for game configuration
 	alphabet_upper = list(string.ascii_uppercase)
 	bloc_positions=[]
+	r = 0
 	print("Hello, welcome to the CLI\n")
 	print("Please enter the following information:\n")
 
@@ -618,17 +624,22 @@ if __name__ == "__main__":
 	print("==== to force the use of minimax input  0, to force the use of alphabeta input 1\n")
 	a = bool(input())
 
+
 	print("==== select the player configuration from the following options:\n"+
-	"\t1 for Human vs Human\n" + "\t2 for Human vs AI (Human is player X)\n" + "\t3 for AI vs Human (Human is player o)\n" + "\t4 for AI vs AI")
+	"\t1 for Human vs Human\n" + "\t2 for Human vs AI (Human is player X)\n" + "\t3 for AI vs Human (Human is player o)\n" + "\t4 for AI vs AI\n"+ "\t5 for scoreboard")
 	modes = int(input())
-	while(modes > 4 or modes < 1):
-		print("please enter either 1, 2, 3 or 4\n")
+	while(modes > 5 or modes < 1):
+		print("please enter either 1, 2, 3, 4 or 5\n")
 		modes = int(input())
+	if(modes == 5):
+		print("please enter a value of r, the scoreboard game will run r*2 times: \n")
+		r = int(input())
 
 	filename = "gamefile"+str(n)+str(b)+str(s)+str(t)+".txt"	
 	path_current = os.getcwd()
 	path_new = path_current+"/game_files"
 	dir = os.path.join(path_new, filename)
+	dir_scoreboard = os.path.join(path_new, "scoreboard.txt")
 	#os.mkdir(path_new)
 	if not os.path.exists(path_new):
  		 #os.remove(path_new)
@@ -636,6 +647,9 @@ if __name__ == "__main__":
 	
 	if os.path.exists(path_new+"/"+filename):
  		 os.remove(path_new+"/"+filename)
+
+	if os.path.exists(path_new+"/"+"scoreboard.txt"):
+ 		 os.remove(path_new+"/"+"scoreboard.txt")
 
 
 	with open(dir,'a') as f:
@@ -662,6 +676,17 @@ if __name__ == "__main__":
 		else:
 			f.writelines("Player 1: AI, "+"d is "+str(d1)+", a is " + str(a)+"\n")
 			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(a)+"\n")
+	
+	if(r>0):
+		with open(dir_scoreboard, 'a') as fs:
+			fs.writelines("the value of the board size n is "+str(n)+"\n")
+			fs.writelines("the number of blocs b is "+str(b)+"\n")
+			fs.writelines("the value of the winning line-up s is "+str(s)+"\n")
+			fs.writelines("the value of the maximum allowed time for the program to return a move is "+str(t)+"\n")
+			fs.writelines("Player 1: AI, "+"d is "+str(d1)+", a is " + str(a)+"\n")
+			fs.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(a)+"\n")
+			fs.writelines("The number of played games is"+str(2*r)+"\n")
+
 
 	main()
 
