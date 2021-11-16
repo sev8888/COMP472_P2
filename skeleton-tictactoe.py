@@ -1,5 +1,8 @@
 # based on code from https://stackabuse.com/minimax-and-alpha-beta-pruning-in-python
 
+#Sevag Kaspar - 40100393
+#Duc Minh Bui - 40073498
+#Minh-Tam Do  - 40095639
 import time
 import string
 import array
@@ -975,4 +978,5 @@ if __name__ == "__main__":
 	main()
 
 	f.close()
+	fs.close()
 
