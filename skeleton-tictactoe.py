@@ -815,23 +815,23 @@ class Game:
 				end = time.time()
 			if (self.player_turn == 'X' and player_x == self.HUMAN) or (self.player_turn == 'O' and player_o == self.HUMAN):
 					if self.recommend:
-						real_x = alphabet_upper[x]
+						#real_x = alphabet_upper[x]
 						with open(dir,'a') as f:
-							f.writelines(F'Recommended move: {real_x}{y}\n')
+							f.writelines(F'Recommended move: {x}{y}\n')
 							f.writelines(F'Evaluation time: {round(end - start, 7)}s\n')
 
 						print(F'Evaluation time: {round(end - start, 7)}s')
-						print(F'Recommended move: {real_x}{y}')
+						print(F'Recommended move: x={x}, y={y}')
 						
 					(x,y) = self.input_move()
 			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
-					real_x = alphabet_upper[x]
+					#real_x = alphabet_upper[x]
 					with open(dir,'a') as f:
 						
-						f.writelines(F'Player {self.player_turn} under AI control plays: {real_x}{y}\n')
+						f.writelines(F'Player {self.player_turn} under AI control plays: {x}{y}\n')
 						f.writelines(F'i	Evaluation time: {round(end - start, 7)}s\n')
 					print(F'Evaluation time: {round(end - start, 7)}s')
-					print(F'Player {self.player_turn} under AI control plays: {real_x}{y}')
+					print(F'Player {self.player_turn} under AI control plays: x={x}, y={y}')
 			self.current_state[x][y] = self.player_turn
 			self.switch_player()
 
