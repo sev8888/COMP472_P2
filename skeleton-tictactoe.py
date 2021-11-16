@@ -254,7 +254,7 @@ class Game:
 						if v > value:
 							value = v
 							x = i
-							y = j
+							y = j	
 					else:
 						self.current_state[i][j] = 'X'
 						(v, _, _) = self.alphabeta(alpha, beta, max=True)
@@ -275,8 +275,7 @@ class Game:
 							beta = value
 		return (value, x, y)
 
-	def e1(self, score, depth, player='X'):
-		# fast algorithm
+	def e1(self, player='X'):
 		# player is maximizing
 		# opponent is minimizing
 		# heuristic counts number of other X/O placed in the the same line
@@ -285,6 +284,10 @@ class Game:
 		else:
 			opponent = 'X'
 
+		scoref = 0
+		x = 0
+		y = 0
+
 		result = self.is_end()
 		if result == player:
 			return (1000, x, y)
@@ -292,47 +295,39 @@ class Game:
 			return (-1000, x, y)
 		elif result == '.':
 			return (0, x, y)
-		
-		score = 0
-		scoref = score
-		x = 0
-		y = 0
 
 		for i in range(0,n):
 			for j in range(0,n):
 				if self.current_state[i][j]=='.':
 					# count score for row
+					score = 0
 					for z in range (0,n):
 						if self.current_state[i][z] == player:
-							score = score + 1*aggression
+							score = score + 1
 						elif self.current_state[i][z] == opponent or self.current_state[i][z] == '%':
 							score = score - 1
 					# count score for col
 					for z in range (0,n):
 						if self.current_state[z][j] == player:
-							score = score + 1*aggression
+							score = score + 1
 						elif self.current_state[z][j] == opponent or self.current_state[z][j] == '%':
 							score = score - 1
 					# count score for main diagonal
 					for z in range (-n,n):
-						if (i+z)%n >= n or (i+z)%n < 0 or (j+z)%n >= n or (j+z)%n < 0: #ignore out of bound
+						if (i+z) >= n or (i+z) < 0 or (j+z) >= n or (j+z) < 0: #ignore out of bound
 							continue
 						elif self.current_state[(i+z)%n][(j+z)%n] == player:
-							score = score + 1*aggression
-						elif self.current_state[(i+z)%n][(j+z)%n] == opponent:
+							score = score + 1
+						elif self.current_state[(i+z)%n][(j+z)%n] == opponent or self.current_state[(i+z)%n][(j+z)%n] == '%':
 							score = score - 1
-						elif self.current_state[(i+z)%n][(j+z)%n] == '%':
-							score = score - 1*aggression
 					# count score for second diagonal
 					for z in range (-n,n):
-						if (i+z)%n >= n or (i+z)%n < 0 or (j+z)%n >= n or (j+z)%n < 0: #ignore out of bound
+						if (i+z) >= n or (i+z) < 0 or (j-z) >= n or (j-z) < 0: #ignore out of bound
 							continue
 						elif self.current_state[(i+z)%n][(j-z)%n] == player:
-							score = score + 1*aggression
-						elif self.current_state[(i+z)%n][(j-z)%n] == opponent:
+							score = score + 1
+						elif self.current_state[(i+z)%n][(j-z)%n] == opponent or self.current_state[(i+z)%n][(j-z)%n] == '%':
 							score = score - 1
-						elif self.current_state[(i+z)%n][(j-z)%n] == '%':
-							score = score - 1*aggression
 					# if score is greater, 
 					if score >= scoref:
 						scoref = score
@@ -496,13 +491,13 @@ class Game:
 def main():
 	g = Game(recommend=False)
 	if(modes == 1):
-		g.play(algo=sel,player_x=Game.HUMAN,player_o=Game.HUMAN)
+		g.play(algo=a,player_x=Game.HUMAN,player_o=Game.HUMAN)
 	elif(modes == 2):
-		g.play(algo=sel,player_x=Game.HUMAN,player_o=Game.AI)
+		g.play(algo=a,player_x=Game.HUMAN,player_o=Game.AI)
 	elif(modes == 3):
-		g.play(algo=sel,player_x=Game.AI,player_o=Game.HUMAN)
+		g.play(algo=a,player_x=Game.AI,player_o=Game.HUMAN)
 	elif(modes == 4):
-		g.play(algo=sel,player_x=Game.AI,player_o=Game.AI)
+		g.play(algo=a,player_x=Game.AI,player_o=Game.AI)
 
 if __name__ == "__main__":
 	#user inputs for game configuration
@@ -561,7 +556,7 @@ if __name__ == "__main__":
 	t = float(input())
 
 	print("==== to force the use of minimax input  0, to force the use of alphabeta input 1\n")
-	sel = bool(input())
+	a = bool(input())
 
 	print("==== select the player configuration from the following options:\n"+
 	"\t1 for Human vs Human\n" + "\t2 for Human vs AI (Human is player X)\n" + "\t3 for AI vs Human (Human is player o)\n" + "\t4 for AI vs AI")
@@ -595,18 +590,18 @@ if __name__ == "__main__":
 			f.writelines("\n")
 		else:
 			f.writelines("	N/A - there are no blocs\n"+"\n")
-		if(sel == 1):
-			f.writelines("Player 1: Human, "+"d is "+str(d1)+", a is " + str(sel)+"\n")
-			f.writelines("Player 2: Human, "+"d is "+str(d2)+", a is " + str(sel)+"\n")
-		elif(sel == 2):
-			f.writelines("Player 1: Human, "+"d is "+str(d1)+", a is " + str(sel)+"\n")
-			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(sel)+"\n")
-		elif(sel == 3):
-			f.writelines("Player 1: Human, "+"d is "+str(d1)+", a is " + str(sel)+"\n")
-			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(sel)+"\n")
+		if(a == 1):
+			f.writelines("Player 1: Human, "+"d is "+str(d1)+", a is " + str(a)+"\n")
+			f.writelines("Player 2: Human, "+"d is "+str(d2)+", a is " + str(a)+"\n")
+		elif(a == 2):
+			f.writelines("Player 1: Human, "+"d is "+str(d1)+", a is " + str(a)+"\n")
+			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(a)+"\n")
+		elif(a == 3):
+			f.writelines("Player 1: Human, "+"d is "+str(d1)+", a is " + str(a)+"\n")
+			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(a)+"\n")
 		else:
-			f.writelines("Player 1: AI, "+"d is "+str(d1)+", a is " + str(sel)+"\n")
-			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(sel)+"\n")
+			f.writelines("Player 1: AI, "+"d is "+str(d1)+", a is " + str(a)+"\n")
+			f.writelines("Player 2: AI, "+"d is "+str(d2)+", a is " + str(a)+"\n")
 
 	main()
 
