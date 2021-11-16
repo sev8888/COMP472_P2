@@ -194,6 +194,11 @@ class Game:
 		# 0  - a tie
 		# 1  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
+		timer = time.time()
+
+		if(time.time() >= timer+t):
+			return 
+	
 		value = 2
 		if max:
 			value = -2
@@ -206,33 +211,53 @@ class Game:
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
-		for i in range(0, n):
-			for j in range(0, n):
-				if self.current_state[i][j] == '.':
-					if max:
-						self.current_state[i][j] = 'O'
-						(v, _, _) = self.minimax(max=False)
-						if v > value:
-							value = v
-							x = i
-							y = j
-					else:
-						self.current_state[i][j] = 'X'
-						(v, _, _) = self.minimax(max=True)
-						if v < value:
-							value = v
-							x = i
-							y = j
-					self.current_state[i][j] = '.'
-		return (value, x, y)
+		if(time.time()<= timer+t):
+			for i in range(0, n):
+				if(time.time() >= timer + t):
+					break
+				for j in range(0, n):
+					if(time.time() >= timer + t):
+						break
+					if self.current_state[i][j] == '.':
+						if max:
+							self.current_state[i][j] = 'O'
+							if(time.time() >= timer + t):
+								break
+							(v, _, _) = self.minimax(max=False)
+							if v > value:
+								if(time.time() >= timer + t):
+									break
+								value = v
+								x = i
+								y = j
+						else:
+							self.current_state[i][j] = 'X'
+							if(time.time() >= timer + t):
+								break
+							(v, _, _) = self.minimax(max=True)
+							if(time.time() >= timer + t):
+									break
+							if v < value:
+								value = v
+								x = i
+								y = j
+						self.current_state[i][j] = '.'
+						if(time.time() >= timer + t):
+									break
+			return (value, x, y)
 
 	def alphabeta(self, alpha=-2, beta=2, max=False):
+
+		
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
 		# 0  - a tie
 		# 1  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
+		timer = time.time()
+
+
 		value = 2
 		if max:
 			value = -2
@@ -246,10 +271,16 @@ class Game:
 		elif result == '.':
 			return (0, x, y)
 		for i in range(0, n):
+			if(time.time() >= timer + t):
+				break
 			for j in range(0, n):
+				if(time.time() >= timer + t):
+					break
 				if self.current_state[i][j] == '.':
 					if max:
 						self.current_state[i][j] = 'O'
+						if(time.time() > timer + t):
+							break
 						(v, _, _) = self.alphabeta(alpha, beta, max=False)
 						if v > value:
 							value = v
@@ -257,6 +288,8 @@ class Game:
 							y = j	
 					else:
 						self.current_state[i][j] = 'X'
+						if(time.time() > timer + t):
+							break
 						(v, _, _) = self.alphabeta(alpha, beta, max=True)
 						if v < value:
 							value = v
@@ -273,12 +306,16 @@ class Game:
 							return (value, x, y)
 						if value < beta:
 							beta = value
+					if(time.time() >= timer + t):
+						break
 		return (value, x, y)
 
 	def e1(self, player='X'):
 		# player is maximizing
 		# opponent is minimizing
 		# heuristic counts number of other X/O placed in the the same line
+		start = time.time()
+		timer = time.time()
 		if player == 'X':
 			opponent = 'O'
 		else:
@@ -297,23 +334,34 @@ class Game:
 			return (0, x, y)
 
 		for i in range(0,n):
+			if(time.time() >= timer + t):
+				break
 			for j in range(0,n):
+				if(time.time() >= timer + t):
+					break
 				if self.current_state[i][j]=='.':
+					
 					# count score for row
 					score = 0
 					for z in range (0,n):
+						if(time.time() >= timer + t):
+							break
 						if self.current_state[i][z] == player:
 							score = score + 1
 						elif self.current_state[i][z] == opponent or self.current_state[i][z] == '%':
 							score = score - 1
 					# count score for col
 					for z in range (0,n):
+						if(time.time() >= timer + t):
+							break
 						if self.current_state[z][j] == player:
 							score = score + 1
 						elif self.current_state[z][j] == opponent or self.current_state[z][j] == '%':
 							score = score - 1
 					# count score for main diagonal
 					for z in range (-n,n):
+						if(time.time() >= timer + t):
+							break
 						if (i+z) >= n or (i+z) < 0 or (j+z) >= n or (j+z) < 0: #ignore out of bound
 							continue
 						elif self.current_state[(i+z)%n][(j+z)%n] == player:
@@ -322,6 +370,8 @@ class Game:
 							score = score - 1
 					# count score for second diagonal
 					for z in range (-n,n):
+						if(time.time() >= timer + t):
+							break
 						if (i+z) >= n or (i+z) < 0 or (j-z) >= n or (j-z) < 0: #ignore out of bound
 							continue
 						elif self.current_state[(i+z)%n][(j-z)%n] == player:
@@ -333,9 +383,12 @@ class Game:
 						scoref = score
 						x = i
 						y = j
+		end = time.time()
 		return (scoref, x, y)
 
 	def e2(self,first_player,second_player, negative_infinitive):
+
+		start = time.time()
 		# initialize the possible_move dictionary 
 		possible_move = {'UL' : 0, 'U' : 0, 'UR' : 0, 'R' : 0, 'L' : 0, 'DL' : 0, 'D' : 0, 'DR' : 0}
 		# position x of posible move
@@ -435,6 +488,7 @@ class Game:
 					chosen_position = key
 			# first player decisition		
 			self.current_state[x_posible_move[chosen_position]][y_posible_move[chosen_position]] = first_player
+			end = time.time()
 
 	def play(self,algo=None,player_x=None,player_o=None):
 		if algo == None:
@@ -470,11 +524,11 @@ class Game:
 					if self.recommend:
 						real_x = alphabet_upper[x]
 						with open(dir,'a') as f:
-							f.writelines(F'Recommended move: x = {real_x}, y = {y}\n')
+							f.writelines(F'Recommended move: {real_x}{y}\n')
 							f.writelines(F'Evaluation time: {round(end - start, 7)}s\n')
 
 						print(F'Evaluation time: {round(end - start, 7)}s')
-						print(F'Recommended move: x = {real_x}, y = {y}')
+						print(F'Recommended move: {real_x}{y}')
 						
 					(x,y) = self.input_move()
 			if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
@@ -484,7 +538,7 @@ class Game:
 						f.writelines(F'Player {self.player_turn} under AI control plays: {real_x}{y}\n')
 						f.writelines(F'i	Evaluation time: {round(end - start, 7)}s\n')
 					print(F'Evaluation time: {round(end - start, 7)}s')
-					print(F'Player {self.player_turn} under AI control plays: x = {real_x}, y = {y}')
+					print(F'Player {self.player_turn} under AI control plays: {real_x}{y}')
 			self.current_state[x][y] = self.player_turn
 			self.switch_player()
 
