@@ -96,7 +96,7 @@ class Game:
 						return current_winner
 				else:
 					current_winner = self.current_state[x][y]
-					current_count = 0
+					current_count = 1
 		
 		# Horizontal win
 		for y in range(0,n):  #row
@@ -110,7 +110,7 @@ class Game:
 						return current_winner
 				else:
 					current_winner = self.current_state[x][y]
-					current_count = 0
+					current_count = 1
 
 		# Main diagonal win
 		for i in range(-(n-s), n-s+1):
@@ -200,7 +200,6 @@ class Game:
 		# player is maximizing
 		# opponent is minimizing
 		# heuristic counts number of other X/O placed in the the same line
-		start = time.time()
 		if player == 'X':
 			opponent = 'O'
 		else:
@@ -660,20 +659,28 @@ class Game:
 			end = time.time()
 			return e2(self,max= True)
 	
-	def minimax(self, depth=3, max=False):
+	def minimax(self, timelimit, depth=3, max=False):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
 		# 0  - a tie
 		# 1  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
-		start = time.time()
 
 		value = self.e1(player='O')
 		if max:
 			value = -self.e1(player='X')
 		x = None
 		y = None
+		for i in range (0, n):
+			for j in range (0, n):
+				if self.current_state[i][j] == '.':
+					x = i
+					y = j
+					break
+			if x != None:
+				break
+		
 		result = self.is_end()
 		if result == 'X':
 			return (-1, x, y)
@@ -681,20 +688,20 @@ class Game:
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
-		if(time.time() <= start+t and depth != 0):
+		if(time.time() <= timelimit and depth != 0):
 			for i in range(0, n):
 				for j in range(0, n):
 					if self.current_state[i][j] == '.':
 						if max:
 							self.current_state[i][j] = 'O'
-							(v, _, _) = self.minimax(depth=depth-1, max=False)
+							(v, _, _) = self.minimax(timelimit, depth=depth-1, max=False)
 							if v > value:
 								value = v
 								x = i
 								y = j
 						else:
 							self.current_state[i][j] = 'X'
-							(v, _, _) = self.minimax(depth=depth-1, max=True)
+							(v, _, _) = self.minimax(timelimit, depth=depth-1, max=True)
 							if v < value:
 								value = v
 								x = i
@@ -782,9 +789,9 @@ class Game:
 				start = time.time()
 				if algo == self.MINIMAX:
 					if self.player_turn == 'X':
-						(_, x, y) = self.minimax(max=False)
+						(_, x, y) = self.minimax(timelimit=start+t, max=False)
 					else:
-						(_, x, y) = self.minimax(max=True)
+						(_, x, y) = self.minimax(timelimit=start+t, max=True)
 				elif algo == self.ALPHABETA:
 					if self.player_turn == 'X':
 						(m, x, y) = self.alphabeta(max=False)
