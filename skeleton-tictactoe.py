@@ -196,181 +196,76 @@ class Game:
 			self.player_turn = 'X'
 		return self.player_turn
 
-	def minimax(self, depth=3, max=False):
-		# Minimizing for 'X' and maximizing for 'O'
-		# Possible values are:
-		# -1 - win for 'X'
-		# 0  - a tie
-		# 1  - loss for 'X'
-		# We're initially setting it to 2 or -2 as worse than the worst case:
-		start = time.time()
-
-		value = 2
-		if max:
-			value = -2
-		x = None
-		y = None
-		result = self.is_end()
-		if result == 'X':
-			return (-1, x, y)
-		elif result == 'O':
-			return (1, x, y)
-		elif result == '.':
-			return (0, x, y)
-		if(time.time() <= start+t and depth != 0):
-			for i in range(0, n):
-				for j in range(0, n):
-					if self.current_state[i][j] == '.':
-						if max:
-							self.current_state[i][j] = 'O'
-							(v, _, _) = self.minimax(depth=depth-1, max=False)
-							if v > value:
-								value = v
-								x = i
-								y = j
-						else:
-							self.current_state[i][j] = 'X'
-							(v, _, _) = self.minimax(depth=depth-1, max=True)
-							if v < value:
-								value = v
-								x = i
-								y = j
-						self.current_state[i][j] = '.'
-		return (value, x, y)
-
-	def alphabeta(self, alpha=-2, beta=2, depth=3, max=False):
-
-		
-		# Minimizing for 'X' and maximizing for 'O'
-		# Possible values are:
-		# -1 - win for 'X'
-		# 0  - a tie
-		# 1  - loss for 'X'
-		# We're initially setting it to 2 or -2 as worse than the worst case:
-		timer = time.time()
-
-
-		value = 2
-		if max:
-			value = -2
-		x = None
-		y = None
-		result = self.is_end()
-		if result == 'X':
-			return (-1, x, y)
-		elif result == 'O':
-			return (1, x, y)
-		elif result == '.':
-			return (0, x, y)
-		for i in range(0, n):
-			if(time.time() >= timer + t):
-				break
-			for j in range(0, n):
-				if(time.time() >= timer + t):
-					break
-				if self.current_state[i][j] == '.':
-					if max:
-						self.current_state[i][j] = 'O'
-						if(time.time() > timer + t):
-							break
-						(v, _, _) = self.alphabeta(alpha, beta, max=False)
-						if v > value:
-							value = v
-							x = i
-							y = j	
-					else:
-						self.current_state[i][j] = 'X'
-						if(time.time() > timer + t):
-							break
-						(v, _, _) = self.alphabeta(alpha, beta, max=True)
-						if v < value:
-							value = v
-							x = i
-							y = j
-					self.current_state[i][j] = '.'
-					if max: 
-						if value >= beta:
-							return (value, x, y)
-						if value > alpha:
-							alpha = value
-					else:
-						if value <= alpha:
-							return (value, x, y)
-						if value < beta:
-							beta = value
-					if(time.time() >= timer + t):
-						break
-		return (value, x, y)
-
-	def e1(self, x, y, player='X'):
+	def e1(self, player='X'):
 		# player is maximizing
 		# opponent is minimizing
 		# heuristic counts number of other X/O placed in the the same line
 		start = time.time()
-		timer = time.time()
 		if player == 'X':
 			opponent = 'O'
 		else:
 			opponent = 'X'
-		
 		score = 0
-		x = 0
-		y = 0
 
-		self.current_state[x][y] = player
 		result = self.is_end()
 		if result == player:
-			return (1000, x, y)
+			return (10000)
 		elif result == opponent:
-			return (-1000, x, y)
+			return (-10000)
 		elif result == '.':
-			return (0, x, y)
+			return (0)
 
-		# count score for row
-		for z in range (0,n):
-			if self.current_state[x][z] == player:
-				score = score + 2
-			elif self.current_state[x][z] == '.':
-				score = score + 1
-			elif self.current_state[x][z] == opponent:
-				score = score - 1
-			elif self.current_state[x][z] == '%':
-				score = score - 3
-		# count score for col
-		for z in range (0,n):
-			if self.current_state[z][y] == player:
-				score = score + 2
-			elif self.current_state[z][y] == '.':
-				score = score + 1
-			elif self.current_state[z][y] == opponent:
-				score = score - 1
-			elif self.current_state[z][y] == '%':
-				score = score - 3
-		# count score for main diagonal
-		for z in range (-n,n):
-			if (x+z) >= n or (x+z) < 0 or (y+z) >= n or (y+z) < 0: #ignore out of bound
-				continue
-			elif self.current_state[(x+z)%n][(y+z)%n] == player:
-				score = score + 2
-			elif self.current_state[(x+z)%n][(y+z)%n] == '.':
-				score = score + 1
-			elif self.current_state[(x+z)%n][(y+z)%n] == opponent:
-				score = score - 1
-			elif self.current_state[(x+z)%n][(y+z)%n] == '%':
-				score = score - 3
-		# count score for second diagonal
-		for z in range (-n,n):
-			if (x+z) >= n or (x+z) < 0 or (y-z) >= n or (y-z) < 0: #ignore out of bound
-				continue
-			elif self.current_state[(x+z)%n][(y-z)%n] == player:
-				score = score + 2
-			elif self.current_state[(x+z)%n][(y-z)%n] == '.':
-				score = score + 1
-			elif self.current_state[(x+z)%n][(y-z)%n] == opponent:
-				score = score - 1
-			elif self.current_state[(x+z)%n][(y-z)%n] == '%':
-				score = score - 3
-		return (score, x, y)
+		for x in range(0,n):  #column
+			in_col = 0
+			for y in range (0, n): #row
+				if(self.current_state[x][y] == player or self.current_state[x][y] == '.'):
+					in_col = in_col + 1
+				else:
+					if(in_col >= s):
+						score = score + in_col
+					in_col = 0
+			if(in_col >= s):
+				score = score + in_col
+
+		for y in range(0,n):  #row
+			in_row = 0
+			for x in range (0, n): #col
+				if(self.current_state[x][y] == player or self.current_state[x][y] == '.'):
+					in_row = in_row + 1
+				else:
+					if(in_row >= s):
+						score = score + in_col
+					in_row = 0
+			if(in_row >= s):
+				score = score + in_col
+
+		# Main diagonal
+		for i in range(-(n-s), n-s+1):
+			in_diag1 = 0
+			for j in range(n-abs(i)):
+				if(self.current_state[i+j if i>=0 else 0+j][0+j if i>=0 else abs(i)+j] == player or self.current_state[i+j if i>=0 else 0+j][0+j if i>=0 else abs(i)+j] == '.'):
+					in_diag1 = in_diag1 + 1	
+				else:
+					if(in_diag1 >= s):
+						score = score + in_diag1
+					in_diag1 = 0
+			if(in_diag1 >= s):
+				score = score + in_diag1
+		
+		# Second diagonal
+		for i in range(-(n-s), n-s+1):
+			in_diag2 = 0 
+			for j in range(n-abs(i)):
+				if(self.current_state[i+j if i>=0 else 0+j][(n-1)-j if i>=0 else (n-1)-abs(i)-j] == player or self.current_state[i+j if i>=0 else 0+j][(n-1)-j if i>=0 else (n-1)-abs(i)-j] == '.'):
+					in_diag2 = in_diag2 + 1
+				else:
+					if(in_diag2 >= s):
+						score = score + in_diag2
+					in_diag2 = 0
+			if(in_diag2 >= s):
+				score = score + in_diag2
+		
+		return score
 
 	def e2(self,first_player,second_player, negative_infinitive,max=False):
 
@@ -764,7 +659,112 @@ class Game:
 			self.current_state[x_posible_move[chosen_position]][y_posible_move[chosen_position]] = second_player
 			end = time.time()
 			return e2(self,max= True)
-			
+	
+	def minimax(self, depth=3, max=False):
+		# Minimizing for 'X' and maximizing for 'O'
+		# Possible values are:
+		# -1 - win for 'X'
+		# 0  - a tie
+		# 1  - loss for 'X'
+		# We're initially setting it to 2 or -2 as worse than the worst case:
+		start = time.time()
+
+		value = self.e1(player='O')
+		if max:
+			value = -self.e1(player='X')
+		x = None
+		y = None
+		result = self.is_end()
+		if result == 'X':
+			return (-1, x, y)
+		elif result == 'O':
+			return (1, x, y)
+		elif result == '.':
+			return (0, x, y)
+		if(time.time() <= start+t and depth != 0):
+			for i in range(0, n):
+				for j in range(0, n):
+					if self.current_state[i][j] == '.':
+						if max:
+							self.current_state[i][j] = 'O'
+							(v, _, _) = self.minimax(depth=depth-1, max=False)
+							if v > value:
+								value = v
+								x = i
+								y = j
+						else:
+							self.current_state[i][j] = 'X'
+							(v, _, _) = self.minimax(depth=depth-1, max=True)
+							if v < value:
+								value = v
+								x = i
+								y = j
+						self.current_state[i][j] = '.'
+		return (value, x, y)
+
+	def alphabeta(self, alpha=-2, beta=2, depth=3, max=False):
+
+		
+		# Minimizing for 'X' and maximizing for 'O'
+		# Possible values are:
+		# -1 - win for 'X'
+		# 0  - a tie
+		# 1  - loss for 'X'
+		# We're initially setting it to 2 or -2 as worse than the worst case:
+		timer = time.time()
+
+
+		value = 2
+		if max:
+			value = -2
+		x = None
+		y = None
+		result = self.is_end()
+		if result == 'X':
+			return (-1, x, y)
+		elif result == 'O':
+			return (1, x, y)
+		elif result == '.':
+			return (0, x, y)
+		for i in range(0, n):
+			if(time.time() >= timer + t):
+				break
+			for j in range(0, n):
+				if(time.time() >= timer + t):
+					break
+				if self.current_state[i][j] == '.':
+					if max:
+						self.current_state[i][j] = 'O'
+						if(time.time() > timer + t):
+							break
+						(v, _, _) = self.alphabeta(alpha, beta, max=False)
+						if v > value:
+							value = v
+							x = i
+							y = j	
+					else:
+						self.current_state[i][j] = 'X'
+						if(time.time() > timer + t):
+							break
+						(v, _, _) = self.alphabeta(alpha, beta, max=True)
+						if v < value:
+							value = v
+							x = i
+							y = j
+					self.current_state[i][j] = '.'
+					if max: 
+						if value >= beta:
+							return (value, x, y)
+						if value > alpha:
+							alpha = value
+					else:
+						if value <= alpha:
+							return (value, x, y)
+						if value < beta:
+							beta = value
+					if(time.time() >= timer + t):
+						break
+		return (value, x, y)
 
 	def play(self,algo=None,player_x=None,player_o=None):
 		if algo == None:
