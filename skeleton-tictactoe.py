@@ -670,16 +670,13 @@ class Game:
 		value = self.e1(player='O')
 		if max:
 			value = -self.e1(player='X')
-		x = None
-		y = None
-		for i in range (0, n):
-			for j in range (0, n):
-				if self.current_state[i][j] == '.':
-					x = i
-					y = j
-					break
-			if x != None:
-				break
+		i = 0
+		x = i
+		y = i
+		while(self.current_state[x][y] != '.'):
+			i = i + 1
+			x = int(i%n)
+			y = int(i/n)
 		
 		result = self.is_end()
 		if result == 'X':
