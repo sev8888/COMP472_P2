@@ -196,15 +196,14 @@ class Game:
 			self.player_turn = 'X'
 		return self.player_turn
 
-	def minimax(self, max=False):
+	def minimax(self, depth=3, max=False):
 		# Minimizing for 'X' and maximizing for 'O'
 		# Possible values are:
 		# -1 - win for 'X'
 		# 0  - a tie
 		# 1  - loss for 'X'
 		# We're initially setting it to 2 or -2 as worse than the worst case:
-		timer = time.time()
-
+		start = time.time()
 
 		value = 2
 		if max:
@@ -218,42 +217,28 @@ class Game:
 			return (1, x, y)
 		elif result == '.':
 			return (0, x, y)
-		if(time.time()<= timer+t):
+		if(time.time() <= start+t and depth != 0):
 			for i in range(0, n):
-				if(time.time() >= timer + t):
-					break
 				for j in range(0, n):
-					if(time.time() >= timer + t):
-						break
 					if self.current_state[i][j] == '.':
 						if max:
 							self.current_state[i][j] = 'O'
-							if(time.time() >= timer + t):
-								break
-							(v, _, _) = self.minimax(max=False)
+							(v, _, _) = self.minimax(depth=depth-1, max=False)
 							if v > value:
-								if(time.time() >= timer + t):
-									break
 								value = v
 								x = i
 								y = j
 						else:
 							self.current_state[i][j] = 'X'
-							if(time.time() >= timer + t):
-								break
-							(v, _, _) = self.minimax(max=True)
-							if(time.time() >= timer + t):
-									break
+							(v, _, _) = self.minimax(depth=depth-1, max=True)
 							if v < value:
 								value = v
 								x = i
 								y = j
 						self.current_state[i][j] = '.'
-						if(time.time() >= timer + t):
-									break
-			return (value, x, y)
+		return (value, x, y)
 
-	def alphabeta(self, alpha=-2, beta=2, max=False):
+	def alphabeta(self, alpha=-2, beta=2, depth=3, max=False):
 
 		
 		# Minimizing for 'X' and maximizing for 'O'
@@ -805,11 +790,6 @@ class Game:
 						(m, x, y) = self.alphabeta(max=False)
 					else:
 						(m, x, y) = self.alphabeta(max=True)
-				elif algo == self.H1:
-					if self.player_turn == 'X':
-						(_, x, y) = self.e1(aggression=2)
-					else:
-						(_, x, y) = self.e1(player='O', aggression=2)
 				end = time.time()
 			if (self.player_turn == 'X' and player_x == self.HUMAN) or (self.player_turn == 'O' and player_o == self.HUMAN):
 					if self.recommend:
