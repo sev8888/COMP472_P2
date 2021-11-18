@@ -855,22 +855,24 @@ if __name__ == "__main__":
 	x = 0
 	while x < b:
 		bloc = []
-		print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(x+1)+"\n")
-		row_temp = int(input())
-		while(row_temp > n-1 or row_temp < 0):
-			print("please enter a value in the correct range (between 0 to "+str(n-1)+")\n")
-			row_temp = int(input())
+
 		print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+" for bloc number "+str(x+1)+"\n")
 		column_temp = input().upper()
 		while(column_temp.isalpha == False or (ord(column_temp)> ord(str(alphabet_upper[n-1])))):
 			print("please enter the column letter in the range of A to "+str(alphabet_upper[n-1])+"\n")
 			column_temp = input().upper()
 		column_number = int(ord(column_temp)-65)
-		bloc.append(row_temp)
+
+		print("please enter the row number in the range of 0 to "+str(n-1)+" for bloc number "+str(x+1)+"\n")
+		row_temp = int(input())
+		while(row_temp > n-1 or row_temp < 0):
+			print("please enter a value in the correct range (between 0 to "+str(n-1)+")\n")
+			row_temp = int(input())
 		bloc.append(column_number)
+		bloc.append(row_temp)
 		for existingbloc in bloc_positions:
 			if bloc == existingbloc:
-				print(F"there is already a bloc at {row_temp}{column_temp}, please enter another set of coodinates")
+				print(F"there is already a bloc at {column_temp}{row_temp}, please enter another set of coodinates")
 				break
 		else:
 			bloc_positions.append(bloc)
